@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
  * Defines the methods for a Double-ended Queue that handles String items
  */
 
-public interface StringDoubleEndedQueue {
+public interface StringDoubleEndedQueue<T> {
 	/**
 	 * @return true if the queue is empty
 	 */
@@ -14,40 +14,40 @@ public interface StringDoubleEndedQueue {
 	/**
 	 * insert a String item at the front of the queue
 	 */
-	public void addFirst(String item);
+	public void addFirst(T item);
 
 	/**
 	 * remove and return the item at the front of the queue
 	 * @return String from the front of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
-	public String removeFirst() throws NoSuchElementException;
+	public T removeFirst() throws NoSuchElementException;
 
 	/**
 	 * insert a String item at the end of the queue
 	 */
-	public void addLast(String item);
+	public void addLast(T item);
 
 	/**
 	 * remove and return the item at the end of the queue
 	 * @return String from the end of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
-	public String removeLast() throws NoSuchElementException;
+	public T removeLast() throws NoSuchElementException;
 	
 	/**
 	 * return without removing the item at the front of the queue
 	 * @return String from the front of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
-	public String getFirst();
+	public T getFirst();
 
 	/**
 	 * return without removing the item at the end of the queue
 	 * @return String from the end of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
-	public String getLast();
+	public T getLast();
 	
 	
 	/**

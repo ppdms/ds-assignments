@@ -2,10 +2,10 @@
  * ListNode represents a list node
  * Each node contains an String as data and a reference to the next node in the list.
  */
-public class DoublyNode {
-    protected String data;
-    protected DoublyNode next = null;
-    protected DoublyNode previous = null;
+public class DoublyNode<T> {
+    protected T data;
+    protected DoublyNode<T> next = null;
+    protected DoublyNode<T> previous = null;
 
     /**
      * Constructor. Sets data
@@ -13,7 +13,7 @@ public class DoublyNode {
      * @param data the data stored
      * @return
      */
-    DoublyNode(String data) {
+    DoublyNode(T data) {
         this.data = data;
     }
 
@@ -22,7 +22,7 @@ public class DoublyNode {
      *
      * @return the reference to node's data
      */
-    public String getData() {
+    public T getData() {
         // return data stored in this node
         return data;
     }
@@ -32,7 +32,7 @@ public class DoublyNode {
      *
      * @return the next node
      */
-    public DoublyNode getNext() {
+    public DoublyNode<T> getNext() {
         // get next node
         return next;
     }
@@ -43,7 +43,7 @@ public class DoublyNode {
      *
      * @param next reference
      */
-    public void setPrevious(DoublyNode previous) {
+    public void setPrevious(DoublyNode<T> previous) {
         this.previous = previous;
     }
 
@@ -52,7 +52,7 @@ public class DoublyNode {
      *
      * @return the next node
      */
-    public DoublyNode getPrevious() {
+    public DoublyNode<T> getPrevious() {
         // get next node
         return previous;
     }
@@ -63,7 +63,7 @@ public class DoublyNode {
      *
      * @param next reference
      */
-    public void setNext(DoublyNode next) {
+    public void setNext(DoublyNode<T> next) {
         this.next = next;
     }
 }

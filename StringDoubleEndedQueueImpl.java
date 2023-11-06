@@ -2,9 +2,9 @@ import java.io.PrintStream;
 import java.util.NoSuchElementException;
 
 
-class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
-    DoublyNode head = null;
-    DoublyNode tail = null;
+class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
+    DoublyNode<T> head = null;
+    DoublyNode<T> tail = null;
     int size = 0;
     @Override
     public boolean isEmpty() {
@@ -12,8 +12,8 @@ class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
     }
 
     @Override
-    public void addFirst(String item) {
-        DoublyNode n = new DoublyNode(item);
+    public void addFirst(T item) {
+        DoublyNode<T> n = new DoublyNode<T>(item);
 
         if (isEmpty()) {
             head = n;
@@ -27,10 +27,10 @@ class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
     }
 
     @Override
-    public String removeFirst() throws NoSuchElementException{
+    public T removeFirst() throws NoSuchElementException{
         if (isEmpty()) throw new NoSuchElementException("The list is empty...");
 
-        String data = head.getData();
+        T data = head.getData();
 
         if (head == tail)
             head = tail = null;
@@ -43,8 +43,8 @@ class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
     }
 
     @Override
-    public void addLast(String item) {
-        DoublyNode n = new DoublyNode(item);
+    public void addLast(T item) {
+        DoublyNode<T> n = new DoublyNode<T>(item);
 
         if (isEmpty()) {
             head = n;
@@ -58,15 +58,15 @@ class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
     }
 
     @Override
-    public String removeLast() throws NoSuchElementException {
+    public T removeLast() throws NoSuchElementException {
         if (isEmpty()) throw new NoSuchElementException("The list is empty...");
 
-        String data = tail.getData();
+        T data = tail.getData();
 
         if (head == tail)
             head = tail = null;
         else {
-            DoublyNode iterator = head;
+            DoublyNode<T> iterator = head;
             while (iterator.getNext() != tail)
                 iterator = iterator.getNext();
 
@@ -80,22 +80,22 @@ class StringDoubleEndedQueueImpl implements StringDoubleEndedQueue{
     }
 
     @Override
-    public String getFirst() {
+    public T getFirst() {
         return head.getData();
     }
 
     @Override
-    public String getLast() {
+    public T getLast() {
         return tail.getData();    
     }
 
     @Override
     public void printQueue(PrintStream stream) {
         if (isEmpty()) {
-            System.out.println("List is empty :(");
+            System.out.println("The list is empty...");
         }
         else{
-            DoublyNode current = head;
+            DoublyNode<T> current = head;
 
         StringBuilder ret = new StringBuilder();
 
