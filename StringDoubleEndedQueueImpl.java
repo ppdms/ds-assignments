@@ -3,9 +3,9 @@ import java.util.NoSuchElementException;
 
 
 class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
-    DoublyNode<T> head = null;
-    DoublyNode<T> tail = null;
-    int size = 0;
+    private DoublyNode<T> head = null;
+    private DoublyNode<T> tail = null;
+    private int size = 0;
     @Override
     public boolean isEmpty() {
         return head == null;
