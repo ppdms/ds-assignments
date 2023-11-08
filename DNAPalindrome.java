@@ -11,7 +11,7 @@ import java.io.IOException;
 public class DNAPalindrome
 {
         public static void main(String[] args) {
-            StringDoubleEndedQueueImpl<String> q = new StringDoubleEndedQueueImpl<String>(); 
+            StringDoubleEndedQueueImpl<Character> q = new StringDoubleEndedQueueImpl<Character>(); 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             
             try {
@@ -22,7 +22,7 @@ public class DNAPalindrome
                         System.out.println("Invalid sequence!");
                         return;
                     }
-                    q.addLast(Character.toString(c));
+                    q.addLast(c);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -34,7 +34,7 @@ public class DNAPalindrome
             }
 
             while (!q.isEmpty()) {
-                    int sum = (int) (q.removeFirst().charAt(0) + q.removeLast().charAt(0));
+                    int sum = (int) (q.removeFirst() + q.removeLast());
                     if (!(sum == 149 || sum == 138)) { // A+T, C+G
                         System.out.println("Invalid sequence!");
                         return;
