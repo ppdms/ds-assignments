@@ -1,6 +1,7 @@
 /**
  * ListNode represents a list node
- * Each node contains an String as data and a reference to the next node in the list.
+ * Each node contains an String as data and a reference to the next node in the
+ * list.
  */
 public class Node<T> {
     protected T data;
@@ -37,7 +38,6 @@ public class Node<T> {
         return next;
     }
 
-
     /**
      * Set reference to next node
      *
@@ -56,7 +56,6 @@ public class Node<T> {
         // get next node
         return previous;
     }
-
 
     /**
      * Set reference to next node

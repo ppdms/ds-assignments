@@ -1,11 +1,11 @@
 import java.io.PrintStream;
 import java.util.NoSuchElementException;
 
-
-class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
+class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T> {
     private Node<T> head = null;
     private Node<T> tail = null;
     private int size = 0;
+
     @Override
     public boolean isEmpty() {
         return head == null;
@@ -27,8 +27,9 @@ class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
     }
 
     @Override
-    public T removeFirst() throws NoSuchElementException{
-        if (isEmpty()) throw new NoSuchElementException("The list is empty...");
+    public T removeFirst() throws NoSuchElementException {
+        if (isEmpty())
+            throw new NoSuchElementException("The list is empty...");
 
         T data = head.getData();
 
@@ -52,14 +53,15 @@ class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
         } else {
             tail.setNext(n);
             tail = n;
-        }    
+        }
         // Changing the size accordingly
         size += 1;
     }
 
     @Override
     public T removeLast() throws NoSuchElementException {
-        if (isEmpty()) throw new NoSuchElementException("The list is empty...");
+        if (isEmpty())
+            throw new NoSuchElementException("The list is empty...");
 
         T data = tail.getData();
 
@@ -76,7 +78,7 @@ class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
         // Changing the size accordingly
         size -= 1;
 
-        return data;    
+        return data;
     }
 
     @Override
@@ -86,40 +88,39 @@ class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
 
     @Override
     public T getLast() {
-        return tail.getData();    
+        return tail.getData();
     }
 
     @Override
     public void printQueue(PrintStream stream) {
         if (isEmpty()) {
             System.out.println("The list is empty...");
-        }
-        else{
+        } else {
             Node<T> current = head;
 
-        StringBuilder ret = new StringBuilder();
+            StringBuilder ret = new StringBuilder();
 
-        // while not at end of list, output current node's data
-        ret.append(" HEAD -> ");
+            // while not at end of list, output current node's data
+            ret.append(" HEAD -> ");
 
-        while (current != null) {
-            ret.append(current.data);
+            while (current != null) {
+                ret.append(current.data);
 
-            if (current.getNext() != null)
-                ret.append(" -> ");
+                if (current.getNext() != null)
+                    ret.append(" -> ");
 
-            current = current.next;
-        }
+                current = current.next;
+            }
 
-        ret.append(" <- TAIL");
+            ret.append(" <- TAIL");
 
-        System.out.println(ret.toString());
+            System.out.println(ret.toString());
         }
     }
 
     @Override
     public int size() {
-        return size;    
+        return size;
     }
 
 }

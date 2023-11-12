@@ -18,6 +18,7 @@ public interface StringDoubleEndedQueue<T> {
 
 	/**
 	 * remove and return the item at the front of the queue
+	 * 
 	 * @return String from the front of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
@@ -30,13 +31,15 @@ public interface StringDoubleEndedQueue<T> {
 
 	/**
 	 * remove and return the item at the end of the queue
+	 * 
 	 * @return String from the end of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
 	public T removeLast() throws NoSuchElementException;
-	
+
 	/**
 	 * return without removing the item at the front of the queue
+	 * 
 	 * @return String from the front of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
@@ -44,16 +47,16 @@ public interface StringDoubleEndedQueue<T> {
 
 	/**
 	 * return without removing the item at the end of the queue
+	 * 
 	 * @return String from the end of the queue
 	 * @throws NoSuchElementException if the queue is empty
 	 */
 	public T getLast();
-	
-	
+
 	/**
-	 * print the String items of the queue, starting from the front, 
-     	 * to the print stream given as argument. For example, to 
-         * print the elements to the
+	 * print the String items of the queue, starting from the front,
+	 * to the print stream given as argument. For example, to
+	 * print the elements to the
 	 * standard output, pass System.out as parameter. E.g.,
 	 * printQueue(System.out);
 	 */
@@ -61,6 +64,7 @@ public interface StringDoubleEndedQueue<T> {
 
 	/**
 	 * return the size of the queue, 0 if empty
+	 * 
 	 * @return number of elements in the queue
 	 */
 	public int size();
