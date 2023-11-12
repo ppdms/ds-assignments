@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class DNAPalindrome {
     public static void main(String[] args) {
+        long startTime = System.nanoTime();
         StringDoubleEndedQueueImpl<Character> q = new StringDoubleEndedQueueImpl<Character>();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -41,5 +42,7 @@ public class DNAPalindrome {
             }
         }
         System.out.println("Valid sequence!");
+                    System.out.println((System.nanoTime() - startTime)/1000000);
+
     }
 }
