@@ -32,7 +32,7 @@ public class DNAPalindrome
                     System.out.println("Invalid sequence!");
                     return;
             }
-
+            long startTime = System.nanoTime();
             while (!q.isEmpty()) {
                     int sum = (int) (q.removeFirst() + q.removeLast());
                     if (!(sum == 149 || sum == 138)) { // A+T, C+G
@@ -40,7 +40,7 @@ public class DNAPalindrome
                         return;
                     }
             }
-            
+            System.out.println((System.nanoTime() - startTime)/1000000); 
             System.out.println("Valid sequence!");
         }
 }
