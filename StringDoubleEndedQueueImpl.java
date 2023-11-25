@@ -81,11 +81,13 @@ class StringDoubleEndedQueueImpl<T> implements StringDoubleEndedQueue<T>{
 
     @Override
     public T getFirst() {
+        if (isEmpty()) throw new NoSuchElementException("The list is empty...");
         return head.getData();
     }
 
     @Override
     public T getLast() {
+        if (isEmpty()) throw new NoSuchElementException("The list is empty...");
         return tail.getData();    
     }
 
