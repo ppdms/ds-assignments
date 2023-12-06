@@ -137,7 +137,7 @@ public class PQ {
 
             // If the heap condition holds, stop. Else swap and go on.
             // child smaller than parent
-            if (comparator.compare(heap[i], heap[min]) == 0)
+            if (comparator.compare(heap[i], heap[min]) == -1)
                 return;
             else {
                 swapIDs(heap[i].getID(), heap[min].getID());
@@ -164,7 +164,7 @@ public class PQ {
         // System.out.println(heap[i].getName());
 
         // compare parent with child i
-        while (i != 1 && comparator.compare(heap[i], heap[parent]) == 0) {
+        while (i != 1 && comparator.compare(heap[i], heap[parent]) == -1) {
             swapIDs(heap[i].getID(), heap[parent].getID());
             swap(i, parent);
             i = parent;

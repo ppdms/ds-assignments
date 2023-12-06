@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class DynamicInfluenza_k_withPQ {
@@ -27,7 +28,9 @@ public class DynamicInfluenza_k_withPQ {
 			return;
 		}
 
-		PQ cities = new PQ(2 * k);
+		Comparator<City> comparator = new NegativeComparator();
+
+		PQ cities = new PQ(2 * k, comparator);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 			String line;
@@ -37,24 +40,26 @@ public class DynamicInfluenza_k_withPQ {
 				city.setID(Integer.valueOf(splited[0]));
 				city.setName(splited[1]);
 				city.setPopulation(Integer.valueOf(splited[2]));
-				city.setInfluenzaCases(-Integer.valueOf(splited[3])); // cheap trick
+				city.setInfluenzaCases(Integer.valueOf(splited[3])); // cheap trick
 
+				System.out.println(city.getName() + " " + cities.size());
 				if (cities.size() == k) {
-					if (cities.min().compareTo(city) < 0) {
+					if (comparator.compare(cities.min(), city) < 0) {
 						cities.getmin();
 						cities.insert(city);
 					}
 				} else {
 					cities.insert(city);
+
 				}
 
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		String[] leaderboard = new String[k];
 		
+		String[] leaderboard = new String[k];
+
 		System.out.println("\nThe top " + k + " cities are:");
 		for (int i = k-1; i >= 0; i--) {
 			leaderboard[i] = cities.getmin().getName();

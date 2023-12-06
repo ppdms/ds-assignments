@@ -13,20 +13,20 @@ public class PositiveComparator implements Comparator<City> {
         String o2Val = decimalFormat.format(((float) o2.getInfluenzaCases() / o2.getPopulation()) * 50000);
         // Check priority based on cases per 50000
         if (Float.valueOf(o1Val) < Float.valueOf(o2Val))
-            return 0;
+            return -1;
         else if (Float.valueOf(o1Val) > Float.valueOf(o2Val))
             return 1;
 
         // Check priority based on name
         int ans = o1.getName().compareTo(o2.getName());
         if (ans < 0)
-            return 0;
+            return -1;
         else if (ans > 0)
             return 1;
 
         // Check priority based on ID
         if (o1.getID() < o2.getID())
-            return 0;
+            return -1;
         return 1;
     }
 }
