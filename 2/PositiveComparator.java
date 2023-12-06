@@ -27,6 +27,8 @@ public class PositiveComparator implements Comparator<City> {
         // Check priority based on ID
         if (o1.getID() < o2.getID())
             return -1;
-        return 1;
+        else if (o1.getID() > o2.getID())
+            return 1;
+        return 0;
     }
 }
