@@ -1,30 +1,43 @@
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class PQ{
+public class PQ {
     private int capacity = 4;
     private City heap[];
     private int ids[];
-    private int size;
+    private int size = 0;
+    private Comparator<City> comparator = new PositiveComparator();
 
     public PQ() {
         heap = new City[capacity + 1];
         ids = new int[1000]; // ids range from 1 to 999
     }
 
+    public PQ(int capacity) {
+        heap = new City[capacity + 1];
+        ids = new int[1000]; // ids range from 1 to 999
+    }
+
+    public PQ(int capacity, Comparator<City> comparator) {
+        heap = new City[capacity + 1];
+        ids = new int[1000]; // ids range from 1 to 999
+        this.comparator = comparator;
+    }
+
     public boolean isEmpty() {
         return size == 0;
     }
 
-    public int size(){
+    public int size() {
         return size;
     }
 
-    private void resize(){
-        capacity = capacity*2;
+    private void resize() {
+        capacity = capacity * 2;
         City[] newHeap = new City[capacity + 1];
 
         // Copy all elements from the original array
-        for (int i=1; i<=size; i++){
+        for (int i = 1; i <= size; i++) {
             newHeap[i] = heap[i];
         }
         heap = newHeap;
@@ -38,7 +51,7 @@ public class PQ{
         return heap[1];
     }
 
-    public City remove(int id){
+    public City remove(int id) {
         int index = ids[id];
         City toRemove = heap[index];
         heap[index] = heap[size];
@@ -52,16 +65,16 @@ public class PQ{
     }
 
     public City getmin() {
-    if (isEmpty()) {
-        throw new NoSuchElementException("Heap is empty.");
-    }
+        if (isEmpty()) {
+            throw new NoSuchElementException("Heap is empty.");
+        }
 
-    /*
-        -> Grab the min item. It is at index 0.
-        -> Move the last item in the heap to the "top" of the
-        heap at index 0.
-        -> Reduce size.
-    */
+        /*
+         * -> Grab the min item. It is at index 0.
+         * -> Move the last item in the heap to the "top" of the
+         * heap at index 0.
+         * -> Reduce size.
+         */
         City minItem = heap[1];
         heap[1] = heap[size];
         // Change the id array
@@ -69,10 +82,10 @@ public class PQ{
 
         size--;
 
-    /*
-        Restore the heap since it is very likely messed up now
-        by bubbling down the element we swapped up to index 0
-    */
+        /*
+         * Restore the heap since it is very likely messed up now
+         * by bubbling down the element we swapped up to index 0
+         */
         sink(1);
 
         return minItem;
@@ -80,28 +93,29 @@ public class PQ{
 
     public void insert(City cityToAdd) {
         // Check for available space
-        if (((float)size/capacity)*100 >= 75) resize();
-    /*
-        -> Place the item at the bottom, far right, of the
-        conceptual binary heap structure
-        -> Increment size
-    */
+        if (((float) size / capacity) * 100 >= 75)
+            resize();
+        /*
+         * -> Place the item at the bottom, far right, of the
+         * conceptual binary heap structure
+         * -> Increment size
+         */
         heap[++size] = cityToAdd;
         // Change the id array
         ids[heap[size].getID()] = size;
-        //size++;
+        // size++;
 
-    /*
-        Restore the heap since it is very likely messed up now
-        by bubbling up the element we just put in the last empty
-        position of the conceptual complete binary tree
-    */
+        /*
+         * Restore the heap since it is very likely messed up now
+         * by bubbling up the element we just put in the last empty
+         * position of the conceptual complete binary tree
+         */
         swim(size);
     }
 
     /*********************************
-        Heap restoration helpers
-    ***********************************/
+     * Heap restoration helpers
+     ***********************************/
 
     private void sink(int i) {
         // determine left, right child
@@ -117,13 +131,13 @@ public class PQ{
             // Determine the smallest child of node i
             int min = left;
             if (right <= size) {
-                if (heap[left].compareTo(heap[right]) == 1)
+                if (comparator.compare(heap[left], heap[right]) == 1)
                     min = right;
             }
 
             // If the heap condition holds, stop. Else swap and go on.
             // child smaller than parent
-            if (heap[i].compareTo(heap[min]) == 0)
+            if (comparator.compare(heap[i], heap[min]) == 0)
                 return;
             else {
                 swapIDs(heap[i].getID(), heap[min].getID());
@@ -143,14 +157,14 @@ public class PQ{
 
         // find parent
         int parent = i / 2;
-        //System.out.println(heap);
-        //System.out.println(i);
-        //System.out.println(parent);
-        //System.out.println(heap[parent].getName());
-        //System.out.println(heap[i].getName());
-        
+        // System.out.println(heap);
+        // System.out.println(i);
+        // System.out.println(parent);
+        // System.out.println(heap[parent].getName());
+        // System.out.println(heap[i].getName());
+
         // compare parent with child i
-        while (i != 1 && heap[i].compareTo(heap[parent]) == 0) {
+        while (i != 1 && comparator.compare(heap[i], heap[parent]) == 0) {
             swapIDs(heap[i].getID(), heap[parent].getID());
             swap(i, parent);
             i = parent;
@@ -164,10 +178,9 @@ public class PQ{
         heap[indexTwo] = temp;
     }
 
-    private void swapIDs(int idOne, int idTwo){
+    private void swapIDs(int idOne, int idTwo) {
         int tempPos = ids[idOne];
         ids[idOne] = ids[idTwo];
         ids[idTwo] = tempPos;
     }
 }
-
