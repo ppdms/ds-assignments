@@ -95,7 +95,7 @@ public class Influenza_k {
     private static int partition(City[] cits, int start, int end) {
         int i = start-1;
         for (int j = start; j<= end-1; j++){
-            if (cits[j].compareTo(cits[end]) == 0){
+            if (cits[j].compareTo(cits[end]) == -1){
                 i++;
                 City temp = cits[j];
                 cits[j] = cits[i];
