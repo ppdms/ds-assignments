@@ -183,4 +183,10 @@ public class PQ {
         ids[idOne] = ids[idTwo];
         ids[idTwo] = tempPos;
     }
+    
+    public void print() {
+        for (int i = 1; i <= size; i++) {
+            System.out.println(heap[i].getName());
+        }
+    }
 }
