@@ -40,9 +40,8 @@ public class DynamicInfluenza_k_withPQ {
 				city.setID(Integer.valueOf(splited[0]));
 				city.setName(splited[1]);
 				city.setPopulation(Integer.valueOf(splited[2]));
-				city.setInfluenzaCases(Integer.valueOf(splited[3])); // cheap trick
+				city.setInfluenzaCases(Integer.valueOf(splited[3]));
 
-				System.out.println(city.getName() + " " + cities.size());
 				if (cities.size() == k) {
 					if (comparator.compare(cities.min(), city) < 0) {
 						cities.getmin();

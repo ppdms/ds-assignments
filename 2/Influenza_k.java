@@ -24,7 +24,7 @@ public class Influenza_k {
         
         // Go through the file to find the number of objects
         int size = 0;
-        String filePath = "test.txt";
+        String filePath = "500.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while (reader.readLine() != null) {

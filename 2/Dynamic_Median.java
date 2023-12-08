@@ -44,10 +44,12 @@ public class Dynamic_Median {
 				if ((hi.size() + lo.size()) % 2 == 0) {
 					if (lo.size() == hi.size() + 2) {
 						hi.insert(lo.getmin());
+						System.out.println("her");
 					}
 				} else {
 					if (lo.size() < hi.size()) {
 						lo.insert(hi.getmin());
+						System.out.println("him");
 					}
 
 				}
