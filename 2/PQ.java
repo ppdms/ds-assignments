@@ -60,6 +60,7 @@ public class PQ {
         size--;
 
         sink(index);
+        swim(index);
 
         return toRemove;
     }
