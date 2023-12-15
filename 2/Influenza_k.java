@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
 
 public class Influenza_k {
     public static void main(String[] args){
@@ -21,10 +19,27 @@ public class Influenza_k {
        the program and display an appropriate message to the user
        
         */  
-        
+
+        // Check if the required arguments have been passed
+        if (args.length != 2) {
+            System.out.println("Usage: java Influenza_k <k> <filepath>");
+            System.exit(1); // Exit with an error code
+        }
+
+        // Get the first argument (integer k)
+        int k = 0;
+        try {
+            k = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid value for k. Please provide an integer.");
+            System.exit(1);
+        }
+
+        // Get the second argument (file path)
+        String filePath = args[1];
+
         // Go through the file to find the number of objects
         int size = 0;
-        String filePath = "500.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             while (reader.readLine() != null) {
@@ -32,6 +47,11 @@ public class Influenza_k {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (k > size){
+            System.out.println("The k you entered exceeds the numbers of cities provided.");
+            return;
         }
 
         City[] cities = new City[size];
@@ -42,7 +62,6 @@ public class Influenza_k {
             int i = 0;
             while ((line = reader.readLine()) != null) {
                 String[] splited = line.split("\\s+");
-                //System.out.println(Arrays.toString(splited));
                 City city = new City();
                 city.setID(Integer.valueOf(splited[0]));
                 city.setName(splited[1]);
@@ -56,18 +75,6 @@ public class Influenza_k {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        //System.out.println(Arrays.toString(cities));
-
-        // Request k
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter k: ");
-        int k = scanner.nextInt();
-
-        if (k > size){
-            System.out.println("The k you entered exceeds the numbers of cities provided.");
-            return;
         }
 
         // Sort the cities array
