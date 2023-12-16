@@ -2,13 +2,26 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.Scanner;
 
 public class DynamicInfluenza_k_withPQ {
 	public static void main(String[] args) {
 
 		int size = 0;
-		String filePath = "test.txt";
+
+		if (args.length != 2) {
+			System.out.println("Usage: java DynamicInfluenza_k <k> <filepath>");
+			System.exit(1);
+		}
+
+		int k = 0;
+		try {
+			k = Integer.parseInt(args[0]);
+		} catch (NumberFormatException e) {
+			System.out.println("Error: Invalid value for k. Please provide an integer.");
+			System.exit(1);
+		}
+
+		String filePath = args[1];
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 			while (reader.readLine() != null) {
@@ -17,11 +30,6 @@ public class DynamicInfluenza_k_withPQ {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Enter k: ");
-		int k = scanner.nextInt();
-		scanner.close();
 
 		if (k > size) {
 			System.out.println("The k you entered exceeds the numbers of cities provided.");
@@ -49,21 +57,20 @@ public class DynamicInfluenza_k_withPQ {
 					}
 				} else {
 					cities.insert(city);
-
 				}
 
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		String[] leaderboard = new String[k];
 
 		System.out.println("\nThe top " + k + " cities are:");
-		for (int i = k-1; i >= 0; i--) {
+		for (int i = k - 1; i >= 0; i--) {
 			leaderboard[i] = cities.getmin().getName();
 		}
-		for (int i = 0; i <k; i++) {
+		for (int i = 0; i < k; i++) {
 			System.out.println(leaderboard[i]);
 		}
 

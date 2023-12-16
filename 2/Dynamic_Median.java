@@ -5,7 +5,12 @@ import java.io.IOException;
 public class Dynamic_Median {
 	public static void main(String[] args) {
 
-		String filePath = "test.txt";
+		if (args.length != 1) {
+            System.out.println("Usage: java DynamicMedian <filepath>");
+            System.exit(1);
+        }
+
+        String filePath = args[0];
 
 		PQ lo = new PQ(500, new NegativeComparator());
 		PQ hi = new PQ(500);
@@ -44,26 +49,16 @@ public class Dynamic_Median {
 				if ((hi.size() + lo.size()) % 2 == 0) {
 					if (lo.size() == hi.size() + 2) {
 						hi.insert(lo.getmin());
-						System.out.println("her");
 					}
 				} else {
 					if (lo.size() < hi.size()) {
 						lo.insert(hi.getmin());
-						System.out.println("him");
 					}
 
 				}
 
-				/* FOR DEBUGGING
-				 * System.out.println("---------------------------");
-				 * lo.print();
-				 * System.out.println();
-				 * hi.print();
-				 * System.out.println();
-				 */
-
 				if ((hi.size() + lo.size()) % 5 == 0) {
-					System.out.println("Mean is: " + lo.min().getName());
+					System.out.println("Mean is: " + lo.min().getName() + " (processed " + (hi.size() + lo.size()) + " lines)");
 				}
 
 			}
