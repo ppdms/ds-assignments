@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
+
 
 public class Dynamic_Median {
 	public static void main(String[] args) {
@@ -58,7 +60,9 @@ public class Dynamic_Median {
 				}
 
 				if ((hi.size() + lo.size()) % 5 == 0) {
-					System.out.println("Mean is: " + lo.min().getName() + " (processed " + (hi.size() + lo.size()) + " lines)");
+					DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        			String val = decimalFormat.format(((float) lo.min().getInfluenzaCases() / lo.min().getPopulation()) * 50000);
+					System.out.println("Mean is: " + val + " (processed " + (hi.size() + lo.size()) + " lines)");
 				}
 
 			}
