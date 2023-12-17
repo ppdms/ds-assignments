@@ -62,7 +62,7 @@ public class Dynamic_Median {
 				if ((hi.size() + lo.size()) % 5 == 0) {
 					DecimalFormat decimalFormat = new DecimalFormat("#.##");
         			String val = decimalFormat.format(((float) lo.min().getInfluenzaCases() / lo.min().getPopulation()) * 50000);
-					System.out.println("Mean is: " + val + " (processed " + (hi.size() + lo.size()) + " lines)");
+					System.out.println(val);
 				}
 
 			}

@@ -81,7 +81,7 @@ public class Influenza_k {
         quickSort(cities, 0, size-1);
 
         //Display the k cities with the highest priority
-        System.out.println("\nThe top "+k+" cities are:");
+        System.out.println("\nThe top k cities are:");
         for (int i=0; i < k; i++){
             System.out.println(cities[i].getName());
         }

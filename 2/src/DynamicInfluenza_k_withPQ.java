@@ -66,7 +66,7 @@ public class DynamicInfluenza_k_withPQ {
 
 		String[] leaderboard = new String[k];
 
-		System.out.println("\nThe top " + k + " cities are:");
+		System.out.println("\nThe top k cities are:");
 		for (int i = k - 1; i >= 0; i--) {
 			leaderboard[i] = cities.getmin().getName();
 		}

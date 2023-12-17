@@ -1,1 +1,9 @@
 .class
+.DS_Store
+1/B.dat
+.gitignore
+1/B.png
+1/B.gp
+2/worldcities.csv
+2/.vscode/settings.json
+2/gen.py
