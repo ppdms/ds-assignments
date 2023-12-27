@@ -114,10 +114,8 @@ public class PQ {
         swim(size);
     }
 
-    /*********************************
-     * Heap restoration helpers
-     ***********************************/
-
+     // Restoration helpers
+     
     private void sink(int i) {
         // determine left, right child
         int left = 2 * i;
