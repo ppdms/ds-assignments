@@ -113,6 +113,7 @@ public class RandomizedBST implements TaxEvasionInterface {
         List<LargeDepositor> res = new List<LargeDepositor>();
         int counter = 0;
 
+
         if (root == null) {
             return null;
         }
@@ -120,23 +121,23 @@ public class RandomizedBST implements TaxEvasionInterface {
         TreeNode[] nodes = new TreeNode[root.N + 1];
         int ind = 0;
 
-        while (curr != null) {
-
-            while (curr != null || nodes.length > 0) {
+        while (curr != null || ind != 0){
+            if (curr != null){
                 nodes[ind] = curr;
+                ind++;
                 curr = curr.left;
-                ++ind;
             }
+            else{
+                curr = nodes[ind-1];
+                ind--;
 
-            // Curr is null so we pop
-            curr = nodes[ind - 1];
-            --ind;
-            if (curr.item.getLastName() == last_name) {
+                if (curr.item.getLastName().equals(last_name)) {
                 res.insertAtBack(curr.item);
                 ++counter;
-            }
+                }
 
-            curr = curr.right;
+                curr = curr.right;
+            }
         }
 
         if (0 < counter && counter <= 5) {
