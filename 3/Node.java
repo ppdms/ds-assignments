@@ -1,4 +1,4 @@
-private class Node<K> {
+public class Node<K> {
     protected K data;
     protected Node<K> next = null;
 
