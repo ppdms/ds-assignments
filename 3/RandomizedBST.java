@@ -222,17 +222,42 @@ public class RandomizedBST implements TaxEvasionInterface {
 
     @Override
     public void printByAFM() {
+        System.out.println("all fine 1");
         if (root == null) {
             return;
         }
         // We will traverse the tree *INORDER* and print the nodes as such
         TreeNode curr = root;
+        System.out.println("all fine 2");
         TreeNode[] nodes = new TreeNode[root.N + 1];
+        System.out.println("size: "+nodes.length);
+        System.out.println("all fine 3");
         int ind = 0;
 
+        while (curr != null || ind != 0){
+            System.out.println("all fine 4");
+            if (curr != null){
+                System.out.println("all fine 5");
+                System.out.println("ind: "+ind);
+                nodes[ind] = curr;
+                ind++;
+                curr = curr.left;
+                System.out.println("all fine 6");
+            }
+            else{
+                System.out.println("all fine 7");
+                curr = nodes[ind-1];
+                ind--;
+                System.out.println(curr.item);
+
+                curr = curr.right;
+                System.out.println("all fine 8");
+            }
+        }
+        /* 
         while (curr != null) {
 
-            while (curr != null || nodes.length > 0) {
+            while (curr != null || ind>0) {
                 nodes[ind] = curr;
                 curr = curr.left;
                 ++ind;
@@ -245,6 +270,7 @@ public class RandomizedBST implements TaxEvasionInterface {
 
             curr = curr.right;
         }
+        */
     }
 
     /*
