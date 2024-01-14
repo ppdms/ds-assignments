@@ -2,7 +2,7 @@ import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 public class PQ {
-    private int capacity = 4;
+    int capacity = 4;
     private LargeDepositor heap[];
     private int size = 0;
     private Comparator<LargeDepositor> comparator = new PositiveComparator();
