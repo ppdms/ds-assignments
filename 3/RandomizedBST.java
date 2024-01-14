@@ -158,9 +158,7 @@ public class RandomizedBST implements TaxEvasionInterface {
 
         if (pq.size() < pq.capacity) {
             pq.insert(node.item);
-            System.out.println("here");
         } else if (pq.min().compareTo(node.item) == -1) {
-            System.out.println("there");
             pq.getmin();
             pq.insert(node.item);
         }
