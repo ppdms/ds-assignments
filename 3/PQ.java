@@ -2,7 +2,7 @@ import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 public class PQ {
-    private int capacity = 4;
+    public int capacity = 4; // I have removed the resizing ability, since we only use it in a use case that doesn't need it, and it helped me solve the problem more easily. It will not work properly if you set the capacity less than the maximum size you want the PQ to attain, so make sure to set the capacity correctly.
     private LargeDepositor heap[];
     private int size = 0;
     private Comparator<LargeDepositor> comparator = new PositiveComparator();
@@ -12,6 +12,7 @@ public class PQ {
     }
 
     public PQ(int capacity) {
+        this.capacity = capacity;
         heap = new LargeDepositor[capacity + 1];
     }
 
@@ -26,17 +27,6 @@ public class PQ {
 
     public int size() {
         return size;
-    }
-
-    private void resize() {
-        capacity = capacity * 2;
-        LargeDepositor[] newHeap = new LargeDepositor[capacity + 1];
-
-        // Copy all elements from the original array
-        for (int i = 1; i <= size; i++) {
-            newHeap[i] = heap[i];
-        }
-        heap = newHeap;
     }
 
     public LargeDepositor min() {
@@ -73,9 +63,6 @@ public class PQ {
     }
 
     public void insert(LargeDepositor LargeDepositorToAdd) {
-        // Check for available space
-        if (((float) size / capacity) * 100 >= 75)
-            resize();
         /*
          * -> Place the item at the bottom, far right, of the
          * conceptual binary heap structure

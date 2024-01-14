@@ -84,18 +84,10 @@ public class List<T> {
 
         StringBuilder ret = new StringBuilder();
 
-        ret.append("HEAD -> ");
-
         while (current != null) {
-            ret.append(current.data.toString());
-
-            if (current.getNext() != null)
-                ret.append(" -> ");
-
+            ret.append(current.data.toString()+"\n");
             current = current.next;
         }
-
-        ret.append(" <- TAIL");
 
         return ret.toString();
     }
