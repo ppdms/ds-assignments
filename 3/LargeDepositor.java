@@ -49,6 +49,10 @@ public class LargeDepositor {
         return this.taxedIncome;
     }
 
+    public int getAFM() {
+        return this.AFM;
+    }
+
     public void setTaxedIncome(double taxedIncome) {
         this.taxedIncome = taxedIncome;
     }
@@ -56,7 +60,7 @@ public class LargeDepositor {
     int key() {return AFM;} //μέθοδος για πρόσβαση στο κλειδί
 
     public String toString(){
-        return "First name: "+firstName+"\n Last name: "+lastName+"\n AFM: "+AFM+"\n Savings: "+savings+"\n Taxed income: "+taxedIncome+"\n";
+        return "First name: "+firstName+"\n Last name: "+lastName+"\n AFM: "+AFM+"\n Savings: "+savings+"\n Taxed income: "+taxedIncome+"\n" + "Score: " + (taxedIncome > 8000 ? savings - taxedIncome : Double.MAX_VALUE) + "\n";
     }
 
     public int compareTo(LargeDepositor other) {

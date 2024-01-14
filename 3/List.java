@@ -1,6 +1,8 @@
 public class List<T> {
     private Node<T> head = null;
     private Node<T> tail = null;
+    public String lastname;
+    public int N;
 
     public List() {
     }
@@ -11,6 +13,7 @@ public class List<T> {
 
     public void insertAtFront(T data) {
         Node<T> n = new Node<T>(data);
+        ++N;
 
         if (isEmpty()) {
             head = n;
@@ -23,6 +26,8 @@ public class List<T> {
 
     public void insertAtBack(T data) {
         Node<T> n = new Node<T>(data);
+                ++N;
+
 
         if (isEmpty()) {
             head = n;
@@ -36,6 +41,8 @@ public class List<T> {
     public T removeFromFront() throws RuntimeException {
         if (isEmpty())
             throw new RuntimeException();
+
+        --N;
 
         T data = head.getData();
 
@@ -51,6 +58,7 @@ public class List<T> {
         if (isEmpty())
             throw new RuntimeException();
 
+        --N;
         T data = tail.getData();
 
         if (head == tail)

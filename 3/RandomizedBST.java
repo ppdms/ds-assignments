@@ -2,14 +2,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.function.Function;
 
 public class RandomizedBST implements TaxEvasionInterface {
+    private int N;
     private class TreeNode {
         LargeDepositor item;
         TreeNode left; // pointer to left subtree
         TreeNode right; // pointer to right subtree
-        int N; // number of nodes in the subtree rooted at this TreeNode
+        int N;
 
         TreeNode(LargeDepositor x) {
             item = x;
@@ -57,13 +57,13 @@ public class RandomizedBST implements TaxEvasionInterface {
         } else {
             h.right = insertR(h.right, x);
         }
-        h.N++;
         return h;
     }
 
     @Override
     public void insert(LargeDepositor item) {
         root = insertR(root, item);
+        ++N;
     }
 
     @Override
@@ -108,37 +108,25 @@ public class RandomizedBST implements TaxEvasionInterface {
         }
     }
 
+    private void traverseAndBuild(TreeNode node, List<LargeDepositor> ls) {
+        if (node == null)
+            return;
+
+        if (node.item.getLastName().equals(ls.lastname))
+            ls.insertAtFront(node.item);
+
+        traverseAndBuild(node.left, ls);
+        traverseAndBuild(node.right, ls);
+    }
+
     @Override
     public List<LargeDepositor> searchByLastName(String last_name) {
         List<LargeDepositor> res = new List<LargeDepositor>();
-        int counter = 0;
+        res.lastname = last_name;
 
-        if (root == null) {
-            return null;
-        }
-        TreeNode curr = root;
-        TreeNode[] nodes = new TreeNode[root.N + 1];
-        int ind = 0;
+        traverseAndBuild(root, res);
 
-        while (curr != null || ind != 0) {
-            if (curr != null) {
-                nodes[ind] = curr;
-                ind++;
-                curr = curr.left;
-            } else {
-                curr = nodes[ind - 1];
-                ind--;
-
-                if (curr.item.getLastName().equals(last_name)) {
-                    res.insertAtBack(curr.item);
-                    ++counter;
-                }
-
-                curr = curr.right;
-            }
-        }
-
-        if (0 < counter && counter <= 5) {
+        if (0 < res.N && res.N <= 5) {
             System.out.println(res);
         }
 
@@ -151,73 +139,48 @@ public class RandomizedBST implements TaxEvasionInterface {
         root = removeNode(root, AFM);
     }
 
+    private double traverseAndSum(TreeNode node) {
+        if (node == null)
+            return 0;
+
+        return node.item.getSavings() + traverseAndSum(node.left) + traverseAndSum(node.right);
+    }
+
     @Override
     public double getMeanSavings() {
-        int sum = 0;
+        return traverseAndSum(root) / N;
 
-        if (root == null) {
-            return 0;
-        }
-        TreeNode curr = root;
-        TreeNode[] nodes = new TreeNode[root.N + 1];
-        int ind = 0;
+    }
 
-        while (curr != null) {
+    private void traverseAndRank(TreeNode node, PQ pq) {
+        if (node == null)
+            return;
 
-            while (curr != null || nodes.length > 0) {
-                nodes[ind] = curr;
-                curr = curr.left;
-                ++ind;
-            }
-
-            // Curr is null so we pop
-            curr = nodes[ind - 1];
-            --ind;
-            sum += curr.item.getSavings();
-            curr = curr.right;
+        if (pq.size() < pq.capacity) {
+            pq.insert(node.item);
+        } else if (pq.min().compareTo(node.item) == 1) {
+            pq.getmin();
+            pq.insert(node.item);
         }
 
-        return sum / root.N;
-
+        traverseAndRank(node.left,pq);
+        traverseAndRank(node.right, pq);
     }
 
     @Override
     public void printΤopLargeDepositors(int k) {
-        PQ pq = new PQ(500); // TODO: might need more?
+        PQ pq = new PQ(k);
+        List<LargeDepositor> ls = new List<LargeDepositor>();
 
-        if (root == null) {
-            return;
-        }
-        TreeNode curr = root;
-        TreeNode[] nodes = new TreeNode[root.N + 1];
-        int ind = 0;
-
-        while (curr != null) {
-
-            while (curr != null || nodes.length > 0) {
-                nodes[ind] = curr;
-                curr = curr.left;
-                ++ind;
-            }
-
-            curr = nodes[ind - 1];
-            --ind;
-            {
-                if (pq.size() < k) {
-                    pq.insert(curr.item);
-                } else if (pq.min().compareTo(curr.item) < 1) {
-                    pq.getmin();
-                    pq.insert(curr.item);
-                }
-
-            }
-
-            curr = curr.right;
-        }
+        traverseAndRank(root, pq);
+        while (pq.size() > 0)
+            ls.insertAtFront(pq.getmin());
+        while (ls.N > 0)
+            System.out.println(ls.removeFromFront());
 
     }
 
-    public void printInorder(TreeNode node) {
+    private void printInorder(TreeNode node) {
         if (node == null)
             return;
 
@@ -350,7 +313,7 @@ public class RandomizedBST implements TaxEvasionInterface {
                     System.out.println();
                     break;
                 case 7:
-                    System.out.println(bst.getMeanSavings());
+                    System.out.println(bst.getMeanSavings() + " EUR");
                     break;
                 case 8:
                     System.out.print("Enter k: ");
