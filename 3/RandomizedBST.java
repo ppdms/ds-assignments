@@ -113,7 +113,6 @@ public class RandomizedBST implements TaxEvasionInterface {
         List<LargeDepositor> res = new List<LargeDepositor>();
         int counter = 0;
 
-
         if (root == null) {
             return null;
         }
@@ -121,19 +120,18 @@ public class RandomizedBST implements TaxEvasionInterface {
         TreeNode[] nodes = new TreeNode[root.N + 1];
         int ind = 0;
 
-        while (curr != null || ind != 0){
-            if (curr != null){
+        while (curr != null || ind != 0) {
+            if (curr != null) {
                 nodes[ind] = curr;
                 ind++;
                 curr = curr.left;
-            }
-            else{
-                curr = nodes[ind-1];
+            } else {
+                curr = nodes[ind - 1];
                 ind--;
 
                 if (curr.item.getLastName().equals(last_name)) {
-                res.insertAtBack(curr.item);
-                ++counter;
+                    res.insertAtBack(curr.item);
+                    ++counter;
                 }
 
                 curr = curr.right;
@@ -207,12 +205,10 @@ public class RandomizedBST implements TaxEvasionInterface {
             {
                 if (pq.size() < k) {
                     pq.insert(curr.item);
-                }
-                else if (pq.min().compareTo(curr.item) < 1) {
+                } else if (pq.min().compareTo(curr.item) < 1) {
                     pq.getmin();
                     pq.insert(curr.item);
                 }
-
 
             }
 
@@ -221,57 +217,20 @@ public class RandomizedBST implements TaxEvasionInterface {
 
     }
 
+    public void printInorder(TreeNode node) {
+        if (node == null)
+            return;
+
+        printInorder(node.left);
+
+        System.out.print(node.item + " ");
+
+        printInorder(node.right);
+    }
+
     @Override
     public void printByAFM() {
-        System.out.println("all fine 1");
-        if (root == null) {
-            return;
-        }
-        // We will traverse the tree *INORDER* and print the nodes as such
-        TreeNode curr = root;
-        System.out.println("all fine 2");
-        TreeNode[] nodes = new TreeNode[root.N + 1];
-        System.out.println("size: "+nodes.length);
-        System.out.println("all fine 3");
-        int ind = 0;
-
-        while (curr != null || ind != 0){
-            System.out.println("all fine 4");
-            if (curr != null){
-                System.out.println("all fine 5");
-                System.out.println("ind: "+ind);
-                nodes[ind] = curr;
-                ind++;
-                curr = curr.left;
-                System.out.println("all fine 6");
-            }
-            else{
-                System.out.println("all fine 7");
-                curr = nodes[ind-1];
-                ind--;
-                System.out.println(curr.item);
-
-                curr = curr.right;
-                System.out.println("all fine 8");
-            }
-        }
-        /* 
-        while (curr != null) {
-
-            while (curr != null || ind>0) {
-                nodes[ind] = curr;
-                curr = curr.left;
-                ++ind;
-            }
-
-            // Curr is null so we pop
-            curr = nodes[ind - 1];
-            --ind;
-            System.out.println(curr);
-
-            curr = curr.right;
-        }
-        */
+        printInorder(root);
     }
 
     /*
@@ -338,7 +297,8 @@ public class RandomizedBST implements TaxEvasionInterface {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            System.out.print("Options:\n1. Insert suspect\n2. Remove suspect\n3. Load data from file\n4. Update suspect's savings\n5. Find suspect by AFM\n6. Find suspect by last name\n7. Calculate mean savings\n8. Print top k depositors\n9. Print all data\nYour choice: ");
+            System.out.print(
+                    "Options:\n1. Insert suspect\n2. Remove suspect\n3. Load data from file\n4. Update suspect's savings\n5. Find suspect by AFM\n6. Find suspect by last name\n7. Calculate mean savings\n8. Print top k depositors\n9. Print all data\nYour choice: ");
 
             switch (sc.nextInt()) {
                 case 1:
@@ -393,7 +353,7 @@ public class RandomizedBST implements TaxEvasionInterface {
                     System.out.println(bst.getMeanSavings());
                     break;
                 case 8:
-                    System.out.print("Enter k: ");                    
+                    System.out.print("Enter k: ");
                     bst.printΤopLargeDepositors(sc.nextInt());
                     System.out.println();
                     break;
@@ -403,9 +363,8 @@ public class RandomizedBST implements TaxEvasionInterface {
                 default:
                     break;
             }
-        
+
         }
     }
-
 
 }
