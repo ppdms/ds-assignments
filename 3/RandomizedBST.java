@@ -87,7 +87,7 @@ public class RandomizedBST implements TaxEvasionInterface {
         // 2) otherwise print a message saying you couldn't find it
         TreeNode curr = foundByAFM(AFM);
         if (curr != null) {
-            curr.item.setSavings(curr.item.getSavings() + savings);
+            curr.item.setSavings(savings);
         } else {
             System.out.println("Requested AFM not found.");
         }
@@ -223,14 +223,14 @@ public class RandomizedBST implements TaxEvasionInterface {
     }
 
     public TreeNode joinNode(TreeNode a, TreeNode b) {
-        // κλειδιά στο a ≤ κλειδιά στο b
-        int N = a.N + b.N;
+        // κλειδιά στο a ≤ κλειδιά στο b       
         if (a == null) {
             return b;
         }
         if (b == null) {
             return a;
         }
+        int N = a.N + b.N;
         if (Math.random() * N < 1.0 * a.N) {
             a.right = joinNode(a.right, b);
             return a;

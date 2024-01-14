@@ -60,7 +60,7 @@ public class LargeDepositor {
     int key() {return AFM;} //μέθοδος για πρόσβαση στο κλειδί
 
     public String toString(){
-        return "First name: "+firstName+"\nLast name: "+lastName+"\nAFM: "+AFM+"\nSavings: "+savings+"\nTaxed income: "+taxedIncome+"\n" + "Score: " + (taxedIncome > 8000 ? savings - taxedIncome : Double.MAX_VALUE) + "\n";
+        return " AFM: "+AFM+" | First name: "+firstName+" | Last name: "+lastName+" | Savings: "+savings+" | Taxed income: "+taxedIncome + "\n----\nScore: " + (taxedIncome > 8000 ? savings - taxedIncome : Double.MAX_VALUE) + "\n----\n";
     }
 
     public int compareTo(LargeDepositor other) {
