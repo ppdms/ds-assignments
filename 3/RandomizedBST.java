@@ -158,7 +158,9 @@ public class RandomizedBST implements TaxEvasionInterface {
 
         if (pq.size() < pq.capacity) {
             pq.insert(node.item);
-        } else if (pq.min().compareTo(node.item) == 1) {
+            System.out.println("here");
+        } else if (pq.min().compareTo(node.item) == -1) {
+            System.out.println("there");
             pq.getmin();
             pq.insert(node.item);
         }
@@ -171,6 +173,8 @@ public class RandomizedBST implements TaxEvasionInterface {
     public void printΤopLargeDepositors(int k) {
         PQ pq = new PQ(k);
         List<LargeDepositor> ls = new List<LargeDepositor>();
+
+        System.out.println(pq.capacity);
 
         traverseAndRank(root, pq);
         while (pq.size() > 0)
