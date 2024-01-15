@@ -1,6 +1,6 @@
-public class List<T> {
-    private Node<T> head = null;
-    private Node<T> tail = null;
+public class List {
+    private Node<LargeDepositor> head = null;
+    private Node<LargeDepositor> tail = null;
     public String lastname;
     public int N;
 
@@ -11,8 +11,8 @@ public class List<T> {
         return head == null;
     }
 
-    public void insertAtFront(T data) {
-        Node<T> n = new Node<T>(data);
+    public void insertAtFront(LargeDepositor data) {
+        Node<LargeDepositor> n = new Node<LargeDepositor>(data);
         ++N;
 
         if (isEmpty()) {
@@ -24,8 +24,8 @@ public class List<T> {
         }
     }
 
-    public void insertAtBack(T data) {
-        Node<T> n = new Node<T>(data);
+    public void insertAtBack(LargeDepositor data) {
+        Node<LargeDepositor> n = new Node<LargeDepositor>(data);
                 ++N;
 
 
@@ -38,13 +38,13 @@ public class List<T> {
         }
     }
 
-    public T removeFromFront() throws RuntimeException {
+    public LargeDepositor removeFromFront() throws RuntimeException {
         if (isEmpty())
             throw new RuntimeException();
 
         --N;
 
-        T data = head.getData();
+        LargeDepositor data = head.getData();
 
         if (head == tail)
             head = tail = null;
@@ -54,17 +54,17 @@ public class List<T> {
         return data;
     }
 
-    public T removeFromBack() throws RuntimeException {
+    public LargeDepositor removeFromBack() throws RuntimeException {
         if (isEmpty())
             throw new RuntimeException();
 
         --N;
-        T data = tail.getData();
+        LargeDepositor data = tail.getData();
 
         if (head == tail)
             head = tail = null;
         else {
-            Node<T> iterator = head;
+            Node<LargeDepositor> iterator = head;
             while (iterator.getNext() != tail)
                 iterator = iterator.getNext();
 
@@ -80,7 +80,7 @@ public class List<T> {
             return "List is empty :(";
         }
 
-        Node<T> current = head;
+        Node<LargeDepositor> current = head;
 
         StringBuilder ret = new StringBuilder();
 

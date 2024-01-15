@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class RandomizedBST implements TaxEvasionInterface {
     private int N;
+
     private class TreeNode {
         LargeDepositor item;
         TreeNode left; // pointer to left subtree
@@ -45,7 +46,7 @@ public class RandomizedBST implements TaxEvasionInterface {
         return h;
     }
 
-    private TreeNode insertR(TreeNode h, LargeDepositor x) {
+    private TreeNode insertAsRoot(TreeNode h, LargeDepositor x) {
         if (h == null) {
             return new TreeNode(x);
         }
@@ -53,17 +54,23 @@ public class RandomizedBST implements TaxEvasionInterface {
             return insertT(h, x);
         }
         if (x.key() < h.item.key()) {
-            h.left = insertR(h.left, x);
+            h.left = insertAsRoot(h.left, x);
         } else {
-            h.right = insertR(h.right, x);
+            h.right = insertAsRoot(h.right, x);
         }
         return h;
     }
 
     @Override
     public void insert(LargeDepositor item) {
-        root = insertR(root, item);
-        ++N;
+        TreeNode curr = foundByAFM(item.getAFM());
+        if (curr != null) {
+            System.out.println("LargeDepositor with this AFM already present in BST.");
+        } else {
+            root = insertAsRoot(root, item);
+            ++N;
+        }
+
     }
 
     @Override
@@ -108,7 +115,7 @@ public class RandomizedBST implements TaxEvasionInterface {
         }
     }
 
-    private void traverseAndBuild(TreeNode node, List<LargeDepositor> ls) {
+    private void traverseAndBuild(TreeNode node, List ls) {
         if (node == null)
             return;
 
@@ -120,8 +127,8 @@ public class RandomizedBST implements TaxEvasionInterface {
     }
 
     @Override
-    public List<LargeDepositor> searchByLastName(String last_name) {
-        List<LargeDepositor> res = new List<LargeDepositor>();
+    public List searchByLastName(String last_name) {
+        List res = new List();
         res.lastname = last_name;
 
         traverseAndBuild(root, res);
@@ -163,14 +170,14 @@ public class RandomizedBST implements TaxEvasionInterface {
             pq.insert(node.item);
         }
 
-        traverseAndRank(node.left,pq);
+        traverseAndRank(node.left, pq);
         traverseAndRank(node.right, pq);
     }
 
     @Override
     public void printΤopLargeDepositors(int k) {
         PQ pq = new PQ(k);
-        List<LargeDepositor> ls = new List<LargeDepositor>();
+        List ls = new List();
 
         System.out.println(pq.capacity);
 
@@ -225,7 +232,7 @@ public class RandomizedBST implements TaxEvasionInterface {
     }
 
     public TreeNode joinNode(TreeNode a, TreeNode b) {
-        // κλειδιά στο a ≤ κλειδιά στο b       
+        // κλειδιά στο a ≤ κλειδιά στο b
         if (a == null) {
             return b;
         }
