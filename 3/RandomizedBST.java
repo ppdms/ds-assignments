@@ -270,9 +270,11 @@ public class RandomizedBST implements TaxEvasionInterface {
 
         while (true) {
             System.out.print(
-                    "Options:\n1. Insert suspect\n2. Remove suspect\n3. Load data from file\n4. Update suspect's savings\n5. Find suspect by AFM\n6. Find suspect by last name\n7. Calculate mean savings\n8. Print top k depositors\n9. Print all data\nYour choice: ");
+                    "Options:\n0. Exit\n1. Insert suspect\n2. Remove suspect\n3. Load data from file\n4. Update suspect's savings\n5. Find suspect by AFM\n6. Find suspect by last name\n7. Calculate mean savings\n8. Print top k depositors\n9. Print all data\nYour choice: ");
 
             switch (sc.nextInt()) {
+                case 0:
+                    System.exit(0);
                 case 1:
                     LargeDepositor sus = new LargeDepositor();
                     System.out.print("Enter AFM: ");
