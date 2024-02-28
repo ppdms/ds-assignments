@@ -15,20 +15,22 @@ public class Falcon<K, V> implements Cache<K, V> {
     private int head = -1;
     private int tail = -1;
     
-    private final int size; // how much we can fit
+    private static final int SIZE = 0; // ?
     private int capacity; // how much space we have remaining
     
     private long lookups = 0;
     private long hits = 0;
 
+    private final int NUL = -1; 
 
+    @SuppressWarnings("unchecked")
     public <K, V> Falcon(int N) {
-        data = new Record<K, V>[N];
-        size = N;
+        data = new Record<K, V>[N]; // this is causing a shit ton of problems TODO
+        SIZE = N;
         capacity = N;
     }
 
-    private static int hash(int hash_code) {
+    private static int hash(int hash_code) { // why static
         // might be able to use memoization here
         hash_code = hash_code ^ (hash_code >> 32);
         hash_code ^= hash_code >> 16;
@@ -36,7 +38,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         hash_code ^= hash_code >> 4;
         hash_code ^= hash_code >> 2;
         hash_code ^= hash_code >> 1;
-        return hash_code % N;
+        return hash_code % SIZE;
     } 
 
     /**
@@ -65,19 +67,45 @@ public class Falcon<K, V> implements Cache<K, V> {
 	public void store(K key, V value) {
         int pos = hash(key.hashCode());
         do {
+            // If the key is found, then we update the he value and the priority of the key 
             if (data[pos].key.equals(key)) { // key already at data[hash]
                 data[pos].val = value;
                 // move this to tail
+                removeEntry(pos);
+                addEntry(pos);
                 return;
-            } else { // key not at data[hash], so:
-                if (capacity == 0) { // if no space, increase capacity by removing LRU record, then insert
+            } 
+            // If the position is null then the key isn't in the cache yet
+            if (data[pos] == null) {
+                // If there is no space then we remove the key located in the head
+                if (capacity == 0) {
+                    removeEntry(head);
+                    //shiftKeys(head);
+                    ++capacity;
                     break;
-                } else { // we have space, just insert
+                } 
+                // We have space, so just insert it
+                else {
+                    data[pos] = new Record<K, V>();
+                    addEntry(pos);
+                    --capacity;
                     return;
                 }
             }
-            ++pos;
+            ++pos; // Change so that it wrappes around if it exceeds the limit TODO
         } while (true);
+        pos = hash(key.hashCode());
+        int currentPosition = pos;
+        do {
+            // In case a break happens we simply search for the new empty spot
+            if (data[currentPosition] == null) {
+                data[pos] = new Record<K, V>();
+                addEntry(pos);
+                --capacity;
+                return;
+            }
+            ++currentPosition; // Change so that it wrappes around if it exceeds the limit TODO
+        } while (currentPosition != pos); // For some reason i think this is useless, since here will always be an empty position...
     }
 	
 	/**
@@ -112,5 +140,42 @@ public class Falcon<K, V> implements Cache<K, V> {
 	public long getNumberOfLookUps() {
         return lookups;
     }
+
+    /*
+     *  Helpers for store
+     */
+    private void removeEntry(int position) {
+        // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
+        if (data[position].l >= 0) {
+            data[data[position].l].r = data[position].r;
+        } 
+        // otherwise change the head pointer
+        else { 
+            head = data[position].r;
+        }
+        // If there is another object to the right of the one to be deleted then set that one's left as the left of the selected one
+        if (data[position].r >= 0) {
+            data[data[position].r].l = data[position].l;
+        }
+        // otherwise change the tail pointer
+        else {
+            tail = data[position].l;
+        }
+    }
+
+    private void addEntry(int position) {
+        // Place the data back at the end (in a way updating it's priority in the cache)
+        if (tail >= 0) {
+            data[tail].r = position;
+        }
+        data[position].l = tail;
+        data[position].r = NUL;
+        tail = position;
+        if (head < 0) {
+            head = tail;
+        }
+    }
+
+
 
 }
