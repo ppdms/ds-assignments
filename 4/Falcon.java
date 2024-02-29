@@ -3,19 +3,14 @@ The peregrine falcon (Falco peregrinus) is the fastest known creature
 in the animal kingdom, reaching speeds of over 240 miles per hour.
 */
 
-public class Falcon<K, V> implements Cache<K, V> {
-    private class Record<K, V> { // using this like a struct
-        K key;
-        V val;
-        int l = -1;
-        int r = -1;
-    }
+import java.lang.reflect.Array;
 
+public class Falcon<K, V> implements Cache<K, V> {
     private final Record<K, V>[] data;
     private int head = -1;
     private int tail = -1;
     
-    private static final int SIZE = 0; // ?
+    private static int SIZE; // ?
     private int capacity; // how much space we have remaining
     
     private long lookups = 0;
@@ -24,10 +19,14 @@ public class Falcon<K, V> implements Cache<K, V> {
     private final int NUL = -1; 
 
     @SuppressWarnings("unchecked")
-    public <K, V> Falcon(int N) {
-        data = new Record<K, V>[N]; // this is causing a shit ton of problems TODO
+    public Falcon(Class clazz, int N) {
+        data = (Record<K, V>[]) Array.newInstance(clazz, capacity);
         SIZE = N;
         capacity = N;
+    }
+
+    public <thisK, thisV> Falcon(int N) {
+        this((new Record<thisK, thisV>()).getClass(), N);
     }
 
     private static int hash(int hash_code) { // why static
