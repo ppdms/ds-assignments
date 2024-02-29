@@ -47,14 +47,30 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 * @return The associated data or null if it is not found
 	 */
     @Override
-	public V lookUp(K key) {
-        ++lookups;
+	public V lookUp(K key) { 
+        /* ++lookups;
         if (data[hash(key.hashCode())].key.equals(key)) {
             ++hits;
             return data[hash(key.hashCode())].val;
-        } else {
+        } else {  
             return null;
-        }
+        }  doesnt work because we are using linear probing !!!! */ 
+        ++lookups;
+        int startPosition = hash(key.hashCode());
+        int currentPosition = startPosition;
+        do {
+            if (data[currentPosition] == null) {
+                return null;
+            }
+            if (key == data[currentPosition]) {
+                removeEntry(currentPosition);
+                addEntry(currentPosition);
+                ++hits;
+                return data[currentPosition].val;
+            }
+            currentPosition = (currentPosition + 1) % SIZE;
+        } while (currentPosition != startPosition);
+        return null;
     }
 	
 	/**
@@ -92,7 +108,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     return;
                 }
             }
-            ++pos; // Change so that it wrappes around if it exceeds the limit TODO
+            pos = (pos + 1) % SIZE; // Wraps around the array
         } while (true);
         pos = hash(key.hashCode());
         int currentPosition = pos;
@@ -104,7 +120,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                 --capacity;
                 return;
             }
-            ++currentPosition; // Change so that it wrappes around if it exceeds the limit TODO
+            currentPosition = (currentPosition + 1) % SIZE; // Wraps around the array
         } while (currentPosition != pos); // For some reason i think this is useless, since here will always be an empty position...
     }
 	
