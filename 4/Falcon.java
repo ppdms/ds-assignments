@@ -19,14 +19,10 @@ public class Falcon<K, V> implements Cache<K, V> {
     private final int NUL = -1; 
 
     @SuppressWarnings("unchecked")
-    public Falcon(Class clazz, int N) {
-        data = (Record<K, V>[]) Array.newInstance(clazz, capacity);
+    public <thisK, thisV> Falcon(int N) {
+        data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), capacity);
         SIZE = N;
         capacity = N;
-    }
-
-    public <thisK, thisV> Falcon(int N) {
-        this((new Record<thisK, thisV>()).getClass(), N);
     }
 
     private static int hash(int hash_code) { // why static
