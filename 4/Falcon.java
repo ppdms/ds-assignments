@@ -37,7 +37,7 @@ public class Falcon<K, V> implements Cache<K, V> {
 
     private void print() {
         for (int i = 0; i < size; i++) {
-            if (data[i].l == NULL && data[i].r == NULL) {
+            if (data[i].l == -1 && data[i].r == -1) {
                 System.out.println("Position " + i + ": null");
             } else {
                 System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r);
@@ -194,8 +194,7 @@ public class Falcon<K, V> implements Cache<K, V> {
      *  Helpers for store
      */
     private void removeEntry(int position) {
-        System.out.println("DEBUG: removeEntry! Position is: " + position + ", cache before remove: ");
-        this.print();
+        System.out.println("DEBUG: removeEntry!");
         // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
@@ -213,10 +212,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             tail = data[position].l;
         }
 
-        data[position].l = NULL;
-        data[position].r = NULL;
-        System.out.println("Cache after remove: ");
-        this.print();
+        data[position] = null;
     }
 
     private void addEntry(int position) {
@@ -234,7 +230,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void shiftKeys(int currentPosition) {
-        System.out.println("DEBUG: shifiting! Current position is: " + currentPosition);
+        System.out.println("DEBUG: shifiting!");
         int freeSlot;
         int currentKeySlot;
         do {
