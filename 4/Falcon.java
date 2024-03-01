@@ -20,7 +20,7 @@ public class Falcon<K, V> implements Cache<K, V> {
 
     @SuppressWarnings("unchecked")
     public <thisK, thisV> Falcon(int N) {
-        data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), capacity);
+        data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), N);
         size = N;
         capacity = N;
     }
