@@ -78,6 +78,8 @@ public class Falcon<K, V> implements Cache<K, V> {
 	public void store(K key, V value) {
         int pos = hash(key.hashCode());
         do {
+            //System.out.println("DEBUG: storing!");
+            //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
             if (data[pos] != null) {
                 if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
@@ -87,17 +89,22 @@ public class Falcon<K, V> implements Cache<K, V> {
                     addEntry(pos);
                     return;
                 }
-            } else {
-                // If the position is null then the key isn't in the cache yet
-                // If there is no space then we remove the key located in the head
                 if (capacity == 0) {
                     removeEntry(head);
                     shiftKeys(head);
                     ++capacity;
                     break;
-                } 
-                // We have space, so just insert it
-                else {
+                }
+            } else {
+                // If the position is null then the key isn't in the cache yet
+                // If there is no space then we remove the key located in the head
+                if (capacity == 0) {
+                    System.out.println("here");
+                    removeEntry(head);
+                    shiftKeys(head);
+                    ++capacity;
+                    break;
+                } else { // We have space, so just insert it
                     data[pos] = new Record<K, V>();
                     addEntry(pos);
                     --capacity;
@@ -157,6 +164,7 @@ public class Falcon<K, V> implements Cache<K, V> {
      *  Helpers for store
      */
     private void removeEntry(int position) {
+        System.out.println("DEBUG: removeEntry!");
         // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
@@ -176,6 +184,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void addEntry(int position) {
+        System.out.println("DEBUG: addEntry!");
         // Place the data back at the end (in a way updating it's priority in the cache)
         if (tail >= 0) {
             data[tail].r = position;
@@ -189,6 +198,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void shiftKeys(int currentPosition) {
+        System.out.println("DEBUG: shifiting!");
         int freeSlot;
         int currentKeySlot;
         do {
