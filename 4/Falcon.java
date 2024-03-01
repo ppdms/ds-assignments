@@ -1,6 +1,6 @@
 /*
 The peregrine falcon (Falco peregrinus) is the fastest known creature
-in the animal kingdom, reaching speeds of over 240 miles per hour.
+in the animal kingdom, reaching speeds of over 387 kilometers per hour.
 */
 
 import java.lang.reflect.Array;
@@ -28,16 +28,13 @@ public class Falcon<K, V> implements Cache<K, V> {
     @SuppressWarnings("unchecked")
     public <thisK, thisV> Falcon(int N) {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), N);
-        for (int i = 0; i < N; i++) { // we initialize all the records once
-            data[i] = new Record<K, V>();
-        }
         size = N;
         capacity = N;
     }
 
     private void print() {
         for (int i = 0; i < size; i++) {
-            if (data[i].l == -1 && data[i].r == -1) {
+            if (data[i] == null) {
                 System.out.println("Position " + i + ": null");
             } else {
                 System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r);
@@ -75,7 +72,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
         do {
-            if (data[currentPosition].l == -1 && data[currentPosition].r == -1) {
+            if (data[currentPosition] == null) {
                 return null;
             }
             if (key == data[currentPosition]) {
@@ -103,7 +100,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         do {
             //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
-            if (data[pos].l != NULL && data[pos].r != NULL) {
+            if (data[pos] != null) {
                 if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
                     data[pos].val = value;
                     // move this to tail
@@ -129,8 +126,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     ++capacity;
                     break;
                 } else { // We have space, so just insert it
-                    data[pos].key = key;
-                    data[pos].val = value;
+                    data[pos] = new Record<K, V>();
                     addEntry(pos);
                     --capacity;
                     System.out.println("DEBUG: storing! Cache after store:");
@@ -144,9 +140,8 @@ public class Falcon<K, V> implements Cache<K, V> {
         int currentPosition = pos;
         do {
             // In case a break happens we simply search for the new empty spot
-            if (data[currentPosition].l == NULL && data[currentPosition].r == NULL) {
-                data[pos].key = key;
-                data[pos].val = value;
+            if (data[currentPosition] == null) {
+                data[pos] = new Record<K, V>();
                 addEntry(pos);
                 --capacity;
                 System.out.println("DEBUG: storing! Cache after store:");
@@ -194,7 +189,8 @@ public class Falcon<K, V> implements Cache<K, V> {
      *  Helpers for store
      */
     private void removeEntry(int position) {
-        System.out.println("DEBUG: removeEntry!");
+        System.out.println("DEBUG: removeEntry! Position is: " + position + ", cache before remove: ");
+        this.print();
         // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
@@ -213,6 +209,8 @@ public class Falcon<K, V> implements Cache<K, V> {
         }
 
         data[position] = null;
+        System.out.println("Cache after remove: ");
+        this.print();
     }
 
     private void addEntry(int position) {
@@ -230,16 +228,15 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void shiftKeys(int currentPosition) {
-        System.out.println("DEBUG: shifiting!");
+        System.out.println("DEBUG: shifiting! Current position is: " + currentPosition);
         int freeSlot;
         int currentKeySlot;
         do {
             freeSlot = currentPosition;
             currentPosition = (currentPosition + 1) % size;
             while (true) {
-                if (data[currentPosition].l == NULL && data[currentPosition].r == NULL) {
-                    data[freeSlot].l = NULL;
-                    data[freeSlot].r = NULL;
+                if (data[currentPosition] == null) {
+                    data[freeSlot] = null;
                     return;
                 }
                 currentKeySlot = hash(data[currentPosition].hashCode());
