@@ -8,6 +8,13 @@ import java.lang.reflect.Array;
 public class Falcon<K, V> implements Cache<K, V> {
     private final int NULL = -1;
 
+    private class Record <K, V> {
+        K key;
+        V val;
+        int l = -1;
+        int r = -1;
+    }
+
     private final Record<K, V>[] data;
     private int head = -1;
     private int tail = -1;
@@ -23,6 +30,17 @@ public class Falcon<K, V> implements Cache<K, V> {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), N);
         size = N;
         capacity = N;
+    }
+
+    private void print() {
+        for (int i = 0; i < size; i++) {
+            if (data[i].l == -1 && data[i].r == -1) {
+                System.out.println("Position " + i + ": null");
+            } else {
+                System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r);
+            }
+        }
+
     }
 
     private static int hash(int hash_code) { // why static
@@ -76,9 +94,10 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 */
     @Override
 	public void store(K key, V value) {
+        System.out.println("DEBUG: storing! Cache before store:");
+        this.print();
         int pos = hash(key.hashCode());
         do {
-            //System.out.println("DEBUG: storing!");
             //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
             if (data[pos] != null) {
@@ -87,6 +106,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     // move this to tail
                     removeEntry(pos);
                     addEntry(pos);
+                    System.out.println("DEBUG: storing! Cache after store:");
+                    this.print();
                     return;
                 }
                 if (capacity == 0) {
@@ -108,6 +129,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     data[pos] = new Record<K, V>();
                     addEntry(pos);
                     --capacity;
+                    System.out.println("DEBUG: storing! Cache after store:");
+                    this.print();
                     return;
                 }
             }
@@ -121,6 +144,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                 data[pos] = new Record<K, V>();
                 addEntry(pos);
                 --capacity;
+                System.out.println("DEBUG: storing! Cache after store:");
+                this.print();
                 return;
             }
             currentPosition = (currentPosition + 1) % size; // Wraps around the array
@@ -181,6 +206,8 @@ public class Falcon<K, V> implements Cache<K, V> {
         else {
             tail = data[position].l;
         }
+
+        data[position] = null;
     }
 
     private void addEntry(int position) {

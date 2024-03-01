@@ -10,7 +10,7 @@ public class TestCacheSpeed {
 		
 		int cachesize = 100;
 		//initialize with your cache implementation		
-		Cache<String, String> cache = new Falcon<String, String>(cachesize);		
+		Cache<String, String> cache = new Falcon<String, String>(10); // TODO: change to cachesize
 		
 		//give path to the dat file
 		String dataFile = "datasets/dataset-1000/data-1000.dat";
