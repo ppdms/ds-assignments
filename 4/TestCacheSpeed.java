@@ -38,8 +38,9 @@ public class TestCacheSpeed {
 					throw new IllegalArgumentException("DID NOT FIND DATA WITH KEY " + key +". Have you set up files properly?");
 				}else{
 					cache.store(key, data);
+					System.out.println("DEBUG: storing!");
 				}
-			}			
+			} else {System.out.println("DEBUG: hit!");}	
 		}
 
 		/*speed test finished*/
