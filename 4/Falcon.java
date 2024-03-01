@@ -6,22 +6,22 @@ in the animal kingdom, reaching speeds of over 240 miles per hour.
 import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
+    private final int NULL = -1;
+
     private final Record<K, V>[] data;
     private int head = -1;
     private int tail = -1;
     
-    private static int SIZE; // ?
+    private static int size;
     private int capacity; // how much space we have remaining
     
     private long lookups = 0;
     private long hits = 0;
 
-    private final int NUL = -1; 
-
     @SuppressWarnings("unchecked")
     public <thisK, thisV> Falcon(int N) {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), capacity);
-        SIZE = N;
+        size = N;
         capacity = N;
     }
 
@@ -33,7 +33,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         hash_code ^= hash_code >> 4;
         hash_code ^= hash_code >> 2;
         hash_code ^= hash_code >> 1;
-        return hash_code % SIZE;
+        return hash_code % size;
     } 
 
     /**
@@ -63,7 +63,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                 ++hits;
                 return data[currentPosition].val;
             }
-            currentPosition = (currentPosition + 1) % SIZE;
+            currentPosition = (currentPosition + 1) % size;
         } while (currentPosition != startPosition);
         return null;
     }
@@ -78,7 +78,7 @@ public class Falcon<K, V> implements Cache<K, V> {
 	public void store(K key, V value) {
         int pos = hash(key.hashCode());
         do {
-            // If the key is found, then we update the he value and the priority of the key 
+            // If the key is found, then we update the value and the priority of the key 
             if (data[pos].key.equals(key)) { // key already at data[hash]
                 data[pos].val = value;
                 // move this to tail
@@ -91,7 +91,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                 // If there is no space then we remove the key located in the head
                 if (capacity == 0) {
                     removeEntry(head);
-                    //shiftKeys(head);
+                    shiftKeys(head);
                     ++capacity;
                     break;
                 } 
@@ -103,7 +103,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     return;
                 }
             }
-            pos = (pos + 1) % SIZE; // Wraps around the array
+            pos = (pos + 1) % size; // Wraps around the array
         } while (true);
         pos = hash(key.hashCode());
         int currentPosition = pos;
@@ -115,7 +115,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                 --capacity;
                 return;
             }
-            currentPosition = (currentPosition + 1) % SIZE; // Wraps around the array
+            currentPosition = (currentPosition + 1) % size; // Wraps around the array
         } while (currentPosition != pos); // For some reason i think this is useless, since here will always be an empty position...
     }
 	
@@ -180,13 +180,56 @@ public class Falcon<K, V> implements Cache<K, V> {
             data[tail].r = position;
         }
         data[position].l = tail;
-        data[position].r = NUL;
+        data[position].r = NULL;
         tail = position;
         if (head < 0) {
             head = tail;
         }
     }
 
-
-
+    private void shiftKeys(int currentPosition) {
+        int freeSlot;
+        int currentKeySlot;
+        do {
+            freeSlot = currentPosition;
+            currentPosition = (currentPosition + 1) % size;
+            while (true) {
+                if (data[currentPosition] == null) {
+                    data[freeSlot] = null;
+                    return;
+                }
+                currentKeySlot = hash(data[currentPosition].hashCode());
+                if (freeSlot <= currentPosition) {
+                    if (freeSlot >= currentKeySlot || currentKeySlot > currentPosition) {
+                        break;
+                    }
+                } else {
+                    if (currentPosition < currentKeySlot && currentKeySlot <= freeSlot) {
+                        break;
+                    }
+                }
+                currentPosition = (currentPosition + 1) % size;
+            }
+            /*
+            I believe this is copying references anyway, so maybe just swap the objects if it works
+            data[freeSlot].key = data[currentPosition].key;
+            data[freeSlot].val = data[currentPosition].val;
+            data[freeSlot].l = data[currentPosition].l;
+            data[freeSlot].r = data[currentPosition].r;
+             */
+            data[freeSlot] = data[currentPosition];
+            if (data[currentPosition].l >= 0) {
+                data[data[currentPosition].l].r = freeSlot;
+                if (currentPosition == tail) {
+                    tail = freeSlot;
+                }
+            }
+            if (data[currentPosition].r >= 0) {
+                data[data[currentPosition].r].l = freeSlot;
+                if (currentPosition == head) {
+                    head = freeSlot;
+                }
+            }
+        } while (true);
+    }
 }
