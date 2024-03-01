@@ -28,13 +28,16 @@ public class Falcon<K, V> implements Cache<K, V> {
     @SuppressWarnings("unchecked")
     public <thisK, thisV> Falcon(int N) {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), N);
+        for (int i = 0; i < N; i++) { // we initialize all the records once
+            data[i] = new Record<K, V>();
+        }
         size = N;
         capacity = N;
     }
 
     private void print() {
         for (int i = 0; i < size; i++) {
-            if (data[i] == null) {
+            if (data[i].l == NULL && data[i].r == NULL) {
                 System.out.println("Position " + i + ": null");
             } else {
                 System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r);
@@ -72,7 +75,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
         do {
-            if (data[currentPosition] == null) {
+            if (data[currentPosition].l == -1 && data[currentPosition].r == -1) {
                 return null;
             }
             if (key == data[currentPosition]) {
@@ -100,7 +103,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         do {
             //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
-            if (data[pos] != null) {
+            if (data[pos].l != NULL && data[pos].r != NULL) {
                 if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
                     data[pos].val = value;
                     // move this to tail
@@ -126,7 +129,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     ++capacity;
                     break;
                 } else { // We have space, so just insert it
-                    data[pos] = new Record<K, V>();
+                    data[pos].key = key;
+                    data[pos].val = value;
                     addEntry(pos);
                     --capacity;
                     System.out.println("DEBUG: storing! Cache after store:");
@@ -140,8 +144,9 @@ public class Falcon<K, V> implements Cache<K, V> {
         int currentPosition = pos;
         do {
             // In case a break happens we simply search for the new empty spot
-            if (data[currentPosition] == null) {
-                data[pos] = new Record<K, V>();
+            if (data[currentPosition].l == NULL && data[currentPosition].r == NULL) {
+                data[pos].key = key;
+                data[pos].val = value;
                 addEntry(pos);
                 --capacity;
                 System.out.println("DEBUG: storing! Cache after store:");
@@ -208,7 +213,8 @@ public class Falcon<K, V> implements Cache<K, V> {
             tail = data[position].l;
         }
 
-        data[position] = null;
+        data[position].l = NULL;
+        data[position].r = NULL;
         System.out.println("Cache after remove: ");
         this.print();
     }
@@ -235,8 +241,9 @@ public class Falcon<K, V> implements Cache<K, V> {
             freeSlot = currentPosition;
             currentPosition = (currentPosition + 1) % size;
             while (true) {
-                if (data[currentPosition] == null) {
-                    data[freeSlot] = null;
+                if (data[currentPosition].l == NULL && data[currentPosition].r == NULL) {
+                    data[freeSlot].l = NULL;
+                    data[freeSlot].r = NULL;
                     return;
                 }
                 currentKeySlot = hash(data[currentPosition].hashCode());
