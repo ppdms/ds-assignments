@@ -127,6 +127,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     break;
                 } else { // We have space, so just insert it
                     data[pos] = new Record<K, V>();
+                    data[pos].key = key;
+                    data[pos].val = value;
                     addEntry(pos);
                     --capacity;
                     System.out.println("DEBUG: storing! Cache after store:");
@@ -142,6 +144,8 @@ public class Falcon<K, V> implements Cache<K, V> {
             // In case a break happens we simply search for the new empty spot
             if (data[currentPosition] == null) {
                 data[pos] = new Record<K, V>();
+                data[pos].key = key;
+                data[pos].val = value;
                 addEntry(pos);
                 --capacity;
                 System.out.println("DEBUG: storing! Cache after store:");
