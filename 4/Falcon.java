@@ -33,6 +33,8 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void print() {
+        System.out.println("Head: " + head);
+        System.out.println("Tail: " + tail);
         for (int i = 0; i < size; i++) {
             if (data[i] == null) {
                 System.out.println("Position " + i + ": null");
