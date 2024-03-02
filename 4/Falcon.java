@@ -37,7 +37,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             if (data[i] == null) {
                 System.out.println("Position " + i + ": null");
             } else {
-                System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r);
+                System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r + ", Hash: " + hash(data[i].key.hashCode()));
             }
         }
 
@@ -45,12 +45,14 @@ public class Falcon<K, V> implements Cache<K, V> {
 
     private static int hash(int hash_code) { // why static
         // might be able to use memoization here
+        /*
         hash_code = hash_code ^ (hash_code >> 32);
         hash_code ^= hash_code >> 16;
         hash_code ^= hash_code >> 8;
         hash_code ^= hash_code >> 4;
         hash_code ^= hash_code >> 2;
         hash_code ^= hash_code >> 1;
+        */
         return hash_code % size;
     } 
 
