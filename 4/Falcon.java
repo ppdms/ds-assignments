@@ -91,7 +91,7 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 */
     @Override
 	public void store(K key, V value) {
-        System.out.println("DEBUG: storing! Cache before store:");
+        System.out.println("DEBUG: storing! Key to store: " + key + " has hash: " + hash(key.hashCode()) + ". Cache before store:");
         this.print();
         int pos = hash(key.hashCode());
         do {
