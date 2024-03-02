@@ -61,13 +61,6 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 */
     @Override
 	public V lookUp(K key) { 
-        /* ++lookups;
-        if (data[hash(key.hashCode())].key.equals(key)) {
-            ++hits;
-            return data[hash(key.hashCode())].val;
-        } else {  
-            return null;
-        }  doesnt work because we are using linear probing !!!! */ 
         ++lookups;
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
@@ -111,8 +104,9 @@ public class Falcon<K, V> implements Cache<K, V> {
                     return;
                 }
                 if (capacity == 0) {
-                    removeEntry(head);
-                    shiftKeys(head);
+                    int currentHead = head;
+                    removeEntry(currentHead);
+                    shiftKeys(currentHead);
                     ++capacity;
                     break;
                 }
@@ -243,7 +237,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     data[freeSlot] = null;
                     return;
                 }
-                currentKeySlot = hash(data[currentPosition].hashCode());
+                currentKeySlot = hash(data[currentPosition].key.hashCode());
                 if (freeSlot <= currentPosition) {
                     if (freeSlot >= currentKeySlot || currentKeySlot > currentPosition) {
                         break;
@@ -255,13 +249,6 @@ public class Falcon<K, V> implements Cache<K, V> {
                 }
                 currentPosition = (currentPosition + 1) % size;
             }
-            /*
-            I believe this is copying references anyway, so maybe just swap the objects if it works
-            data[freeSlot].key = data[currentPosition].key;
-            data[freeSlot].val = data[currentPosition].val;
-            data[freeSlot].l = data[currentPosition].l;
-            data[freeSlot].r = data[currentPosition].r;
-             */
             data[freeSlot] = data[currentPosition];
             if (data[currentPosition].l >= 0) {
                 data[data[currentPosition].l].r = freeSlot;
