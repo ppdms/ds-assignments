@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
     private final int NULL = -1;
-    private final boolean DEBUG = false;
+    private final boolean DEBUG = true;
 
     private class Record <K, V> {
         K key;
