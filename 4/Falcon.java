@@ -130,7 +130,6 @@ public class Falcon<K, V> implements Cache<K, V> {
                     ++capacity;
                     break;
                 } else { // We have space, so just insert it
-                    data[pos] = new Record<K, V>();
                     data[pos].key = key;
                     data[pos].val = value;
                     addEntry(pos);
@@ -147,7 +146,6 @@ public class Falcon<K, V> implements Cache<K, V> {
         do {
             // In case a break happens we simply search for the new empty spot
             if (data[currentPosition].key == null) {
-                data[pos] = new Record<K, V>();
                 data[pos].key = key;
                 data[pos].val = value;
                 addEntry(pos);
