@@ -11,8 +11,8 @@ public class Falcon<K, V> implements Cache<K, V> {
     private class Record <K, V> {
         K key;
         V val;
-        int l = -1;
-        int r = -1;
+        int l = NULL;
+        int r = NULL;
     }
 
     private final Record<K, V>[] data;
@@ -28,6 +28,9 @@ public class Falcon<K, V> implements Cache<K, V> {
     @SuppressWarnings("unchecked")
     public <thisK, thisV> Falcon(int N) {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), N);
+        for (int i = 0; i < N; i++) {
+            data[i] = new Record<K, V>();
+        }
         size = N;
         capacity = N;
     }
@@ -36,7 +39,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         System.out.println("Head: " + head);
         System.out.println("Tail: " + tail);
         for (int i = 0; i < size; i++) {
-            if (data[i] == null) {
+            if (data[i].key == null) {
                 System.out.println("Position " + i + ": null");
             } else {
                 System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r + ", Hash: " + hash(data[i].key.hashCode()));
@@ -69,7 +72,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
         do {
-            if (data[currentPosition] == null) {
+            if (data[currentPosition].key == null) {
                 return null;
             }
             if (key == data[currentPosition]) {
@@ -97,7 +100,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         do {
             //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
-            if (data[pos] != null) {
+            if (data[pos].key != null) {
                 if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
                     data[pos].val = value;
                     // move this to tail
@@ -140,7 +143,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         int currentPosition = pos;
         do {
             // In case a break happens we simply search for the new empty spot
-            if (data[currentPosition] == null) {
+            if (data[currentPosition].key == null) {
                 data[pos] = new Record<K, V>();
                 data[pos].key = key;
                 data[pos].val = value;
@@ -210,7 +213,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             tail = data[position].l;
         }
 
-        data[position] = null;
+        data[position].key = null;
         System.out.println("Cache after remove: ");
         this.print();
     }
@@ -237,8 +240,10 @@ public class Falcon<K, V> implements Cache<K, V> {
             freeSlot = currentPosition;
             currentPosition = (currentPosition + 1) % size;
             while (true) {
-                if (data[currentPosition] == null) {
-                    data[freeSlot] = null;
+                //this.print();
+                try {Thread.sleep(100);} catch (Exception e) {;}
+                if (data[currentPosition].key == null) {
+                    data[freeSlot].key = null;
                     return;
                 }
                 currentKeySlot = hash(data[currentPosition].key.hashCode());
@@ -253,7 +258,11 @@ public class Falcon<K, V> implements Cache<K, V> {
                 }
                 currentPosition = (currentPosition + 1) % size;
             }
-            data[freeSlot] = data[currentPosition];
+            data[freeSlot].key = data[currentPosition].key;
+            data[freeSlot].val = data[currentPosition].val;
+            data[freeSlot].l = data[currentPosition].l;
+            data[freeSlot].r = data[currentPosition].r;
+            data[currentPosition].key = null;
             if (data[currentPosition].l >= 0) {
                 data[data[currentPosition].l].r = freeSlot;
                 if (currentPosition == tail) {
