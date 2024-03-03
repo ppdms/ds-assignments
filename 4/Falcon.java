@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
     private final int NULL = -1;
+    private final boolean DEBUG = false;
 
     private class Record <K, V> {
         K key;
@@ -68,21 +69,25 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 */
     @Override
 	public V lookUp(K key) { 
+        if (DEBUG) System.out.println("Looking up key: " + key + " with hash: " +hash(key.hashCode()));
         ++lookups;
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
         do {
             if (data[currentPosition].key == null) {
+                if (DEBUG) System.out.println("Nothing at hash slot.");
                 return null;
             }
-            if (key == data[currentPosition]) {
+            if (key.equals(data[currentPosition])) {
                 removeEntry(currentPosition);
                 addEntry(currentPosition);
                 ++hits;
+                if (DEBUG) System.out.println("Found it!");
                 return data[currentPosition].val;
             }
             currentPosition = (currentPosition + 1) % size;
         } while (currentPosition != startPosition);
+        if (DEBUG) System.out.println("Didn't find it anywhere.");
         return null;
     }
 	
@@ -94,11 +99,10 @@ public class Falcon<K, V> implements Cache<K, V> {
 	 */
     @Override
 	public void store(K key, V value) {
-        System.out.println("DEBUG: storing! Key to store: " + key + " has hash: " + hash(key.hashCode()) + ". Cache before store:");
-        this.print();
+        if (DEBUG) System.out.println("DEBUG: storing! Key to store: " + key + " has hash: " + hash(key.hashCode()) + ". Cache before store:");
+        if (DEBUG) this.print();
         int pos = hash(key.hashCode());
         do {
-            //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
             if (data[pos].key != null) {
                 if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
@@ -106,8 +110,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     // move this to tail
                     removeEntry(pos);
                     addEntry(pos);
-                    System.out.println("DEBUG: storing! Cache after store:");
-                    this.print();
+                    if (DEBUG) System.out.println("DEBUG: storing! Cache after store:");
+                    if (DEBUG) this.print();
                     return;
                 }
                 if (capacity == 0) {
@@ -121,7 +125,6 @@ public class Falcon<K, V> implements Cache<K, V> {
                 // If the position is null then the key isn't in the cache yet
                 // If there is no space then we remove the key located in the head
                 if (capacity == 0) {
-                    System.out.println("here");
                     removeEntry(head);
                     shiftKeys(head);
                     ++capacity;
@@ -132,8 +135,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                     data[pos].val = value;
                     addEntry(pos);
                     --capacity;
-                    System.out.println("DEBUG: storing! Cache after store:");
-                    this.print();
+                    if (DEBUG) System.out.println("DEBUG: storing! Cache after store:");
+                    if (DEBUG) this.print();
                     return;
                 }
             }
@@ -149,8 +152,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                 data[pos].val = value;
                 addEntry(pos);
                 --capacity;
-                System.out.println("DEBUG: storing! Cache after store:");
-                this.print();
+                if (DEBUG) System.out.println("DEBUG: storing! Cache after store:");
+                if (DEBUG) this.print();
                 return;
             }
             currentPosition = (currentPosition + 1) % size; // Wraps around the array
@@ -194,8 +197,8 @@ public class Falcon<K, V> implements Cache<K, V> {
      *  Helpers for store
      */
     private void removeEntry(int position) {
-        System.out.println("DEBUG: removeEntry! Position is: " + position + ", cache before remove: ");
-        this.print();
+        if (DEBUG) System.out.println("DEBUG: removeEntry! Position is: " + position + ", cache before remove: ");
+        if (DEBUG) this.print();
         // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
@@ -214,12 +217,12 @@ public class Falcon<K, V> implements Cache<K, V> {
         }
 
         data[position].key = null;
-        System.out.println("Cache after remove: ");
-        this.print();
+        if (DEBUG) System.out.println("Cache after remove: ");
+        if (DEBUG) this.print();
     }
 
     private void addEntry(int position) {
-        System.out.println("DEBUG: addEntry!");
+        if (DEBUG) System.out.println("DEBUG: addEntry!");
         // Place the data back at the end (in a way updating it's priority in the cache)
         if (tail >= 0) {
             data[tail].r = position;
@@ -233,15 +236,15 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void shiftKeys(int currentPosition) {
-        System.out.println("DEBUG: shifiting! Current position is: " + currentPosition);
+        if (DEBUG) System.out.println("DEBUG: shifiting! Current position is: " + currentPosition);
         int freeSlot;
         int currentKeySlot;
         do {
             freeSlot = currentPosition;
             currentPosition = (currentPosition + 1) % size;
             while (true) {
-                //this.print();
-                try {Thread.sleep(100);} catch (Exception e) {;}
+                //if (DEBUG) this.print();
+                //try {Thread.sleep(100);} catch (Exception e) {;}
                 if (data[currentPosition].key == null) {
                     data[freeSlot].key = null;
                     return;
