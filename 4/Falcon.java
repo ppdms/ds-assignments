@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
     private final int NULL = -1;
-    private final boolean DEBUG = true;
+    private final boolean DEBUG = false;
 
     private class Record <K, V> {
         K key;
@@ -78,7 +78,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                 if (DEBUG) System.out.println("Nothing at hash slot.");
                 return null;
             }
-            if (key.equals(data[currentPosition])) {
+            if (key.equals(data[currentPosition].key)) {
                 removeEntry(currentPosition);
                 addEntry(currentPosition);
                 ++hits;
