@@ -34,10 +34,6 @@ public class Falcon<K, V> implements Cache<K, V> {
         cacheSize = N;
     }
 
-    private static int hash(int hash_code) {
-        return hash_code % totalCapacity;
-    } 
-
     /**
 	 * Look for data associated with key. 
 	 * @param key the key to look for
@@ -47,7 +43,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     @Override
 	public V lookUp(K key) { 
         ++lookups;
-        int startPosition = hash(key.hashCode());
+        int startPosition = key.hashCode() % totalCapacity;
         int currentPosition = startPosition;
         do {
             if (data[currentPosition].key == null) {
@@ -74,7 +70,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     
     @Override
 	public void store(K key, V value) {
-        int pos = hash(key.hashCode());
+        int pos = key.hashCode() % totalCapacity;
         do {
             // If the key is found, then we update the value and the priority of the key 
             if (data[pos].key != null) {
@@ -111,7 +107,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             }
             pos = (pos + 1) % totalCapacity; // Wraps around the array
         } while (true);
-        pos = hash(key.hashCode());
+        pos = key.hashCode() % totalCapacity;
         int currentPosition = pos;
         do {
             // In case a break happens we simply search for the new empty spot
@@ -205,7 +201,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     data[freeSlot].key = null;
                     return;
                 }
-                currentKeySlot = hash(data[currentPosition].key.hashCode());
+                currentKeySlot = data[currentPosition].key.hashCode() % totalCapacity;
                 if (freeSlot <= currentPosition) {
                     if (freeSlot >= currentKeySlot || currentKeySlot > currentPosition) {
                         break;
