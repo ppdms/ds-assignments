@@ -125,9 +125,8 @@ public class Falcon<K, V> implements Cache<K, V> {
                 // If the position is null then the key isn't in the cache yet
                 // If there is no space then we remove the key located in the head
                 if (capacity == 0) {
-                    int currentHead = head;
-                    removeEntry(currentHead);
-                    shiftKeys(currentHead);
+                    removeEntry(head);
+                    shiftKeys(head);
                     ++capacity;
                     break;
                 } else { // We have space, so just insert it
@@ -215,7 +214,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             tail = data[position].l;
         }
 
-        data[position].key = null;
+        // data[position].key = null; TODO: remove?
         if (DEBUG) System.out.println("Cache after remove: ");
         if (DEBUG) this.print();
     }
