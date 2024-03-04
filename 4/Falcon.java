@@ -19,10 +19,8 @@ public class Falcon<K, V> implements Cache<K, V> {
     private int head = -1;
     private int tail = -1;
     
-    //private static int size;
     private static int totalCapacity; // how much space we have remaining
     private int cacheSize;
-    //private int num_of_elements = 0;
     private long lookups = 0;
     private long hits = 0;
 
@@ -30,32 +28,14 @@ public class Falcon<K, V> implements Cache<K, V> {
     public <thisK, thisV> Falcon(int N) {
         totalCapacity = (int) Math.ceil(N / 0.75);
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), totalCapacity);
+        for (int i = 0; i < totalCapacity; i++) {
+            data[i] = new Record<K, V>();
+            System.out.println(i);
+        }
         cacheSize = N;
     }
 
-    private void print() {
-        System.out.println("Head: " + head);
-        System.out.println("Tail: " + tail);
-        for (int i = 0; i < totalCapacity; i++) {
-            if (data[i] == null) {
-                System.out.println("Position " + i + ": null");
-            } else {
-                System.out.println("Position " + i + ": Key: " + data[i].key + ", Value: " + data[i].val + ", Left: " + data[i].l + ", Right: " + data[i].r + ", Hash: " + hash(data[i].key.hashCode()));
-            }
-        }
-
-    }
-
-    private static int hash(int hash_code) { // why static
-        // might be able to use memoization here
-        /*
-        hash_code = hash_code ^ (hash_code >> 32);
-        hash_code ^= hash_code >> 16;
-        hash_code ^= hash_code >> 8;
-        hash_code ^= hash_code >> 4;
-        hash_code ^= hash_code >> 2;
-        hash_code ^= hash_code >> 1;
-        */
+    private static int hash(int hash_code) {
         return hash_code % totalCapacity;
     } 
 
@@ -67,27 +47,21 @@ public class Falcon<K, V> implements Cache<K, V> {
      
     @Override
 	public V lookUp(K key) { 
-        //System.out.println("Lookup used!");
-        //System.out.println("We are trying to find: "+key);
-        //this.print();
         ++lookups;
         int startPosition = hash(key.hashCode());
         int currentPosition = startPosition;
         do {
-            if (data[currentPosition] == null) {
-                //System.out.println("Nothing found :(");
+            if (data[currentPosition].key == null) {
                 return null;
             }
             if (key.equals(data[currentPosition].key)) {
-                //System.out.println("We found it!!!!! :)");
                 removeEntry(currentPosition);
                 addEntry(currentPosition);
                 ++hits;
                 return data[currentPosition].val;
             }
             currentPosition = (currentPosition + 1) % totalCapacity;
-        } while (currentPosition != startPosition); // this could be while(true) cause since we are using linear probing, there will ATLEAST 1 empty spot 
-        //System.out.println("Nothing found :( (but outside...)");
+        } while (currentPosition != startPosition);
         return null;
     }
     
@@ -101,20 +75,15 @@ public class Falcon<K, V> implements Cache<K, V> {
     
     @Override
 	public void store(K key, V value) {
-        //System.out.println("DEBUG: storing! Key to store: " + key + " has hash: " + hash(key.hashCode()) + ". Cache before store:");
-        //this.print();
         int pos = hash(key.hashCode());
         do {
-            //System.out.println(capacity);
             // If the key is found, then we update the value and the priority of the key 
-            if (data[pos] != null) {
-                if (data[pos].key != null && data[pos].key.equals(key)) { // key already at data[hash]
+            if (data[pos].key != null) {
+                if (data[pos].key.equals(key)) { // key already at data[hash]
                     data[pos].val = value;
                     // move this to tail
                     removeEntry(pos);
                     addEntry(pos);
-                    //System.out.println("DEBUG: storing! Cache after store:");
-                    //this.print();
                     return;
                 }
                 if (cacheSize == 0) {
@@ -129,41 +98,33 @@ public class Falcon<K, V> implements Cache<K, V> {
                 // If there is no space then we remove the key located in the head
                 if (cacheSize == 0) {
                     int currentHead = head;
-                    //System.out.println("here");
                     removeEntry(currentHead);
                     shiftKeys(currentHead);
                     ++cacheSize;
                     break;
                 } else { // We have space, so just insert it
-                    data[pos] = new Record<K, V>();
                     data[pos].key = key;
                     data[pos].val = value;
                     addEntry(pos);
                     --cacheSize;
-                    //System.out.println("DEBUG: storing! Cache after store:");
-                    //this.print();
                     return;
                 }
             }
             pos = (pos + 1) % totalCapacity; // Wraps around the array
         } while (true);
         pos = hash(key.hashCode());
-        //System.out.println("pos ="+pos);
         int currentPosition = pos;
         do {
             // In case a break happens we simply search for the new empty spot
-            if (data[currentPosition] == null) {
-                data[currentPosition] = new Record<K, V>();
+            if (data[currentPosition].key == null) {
                 data[currentPosition].key = key;
                 data[currentPosition].val = value;
                 addEntry(currentPosition);
                 --cacheSize;
-                //System.out.println("DEBUG: storing! Cache after store:");
-                //this.print();
                 return;
             }
             currentPosition = (currentPosition + 1) % totalCapacity; // Wraps around the array
-        } while (currentPosition != pos); // For some reason i think this is useless, since here will always be an empty position...
+        } while (currentPosition != pos);
     }
 	
 	/**
@@ -203,8 +164,6 @@ public class Falcon<K, V> implements Cache<K, V> {
      *  Helpers for store
      */
     private void removeEntry(int position) {
-        //System.out.println("DEBUG: removeEntry! Position is: " + position + ", cache before remove: ");
-        //this.print();
         // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
@@ -221,14 +180,9 @@ public class Falcon<K, V> implements Cache<K, V> {
         else {
             tail = data[position].l;
         }
-
-        //data[position] = null; // TODO this shouldnt be here
-        //System.out.println("Cache after remove: ");
-        //this.print();
     }
 
     private void addEntry(int position) {
-        //System.out.println("DEBUG: addEntry!");
         // Place the data back at the end (in a way updating it's priority in the cache)
         if (tail >= 0) {
             data[tail].r = position;
@@ -242,43 +196,39 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     private void shiftKeys(int currentPosition) {
-        //System.out.println("DEBUG: shifiting! Current position is: " + currentPosition);
         int freeSlot;
         int currentKeySlot;
         do {
             freeSlot = currentPosition;
             currentPosition = (currentPosition + 1) % totalCapacity;
             while (true) {
-                if (data[currentPosition] == null) {
-                    data[freeSlot] = null;
-                    //System.out.println("SHIFT -> RETURN CAUSE OF NULL");
+                if (data[currentPosition].key == null) {
+                    data[freeSlot].key = null;
                     return;
                 }
                 currentKeySlot = hash(data[currentPosition].key.hashCode());
                 if (freeSlot <= currentPosition) {
                     if (freeSlot >= currentKeySlot || currentKeySlot > currentPosition) {
-                        //System.out.println("SHIFT -> BREAK CASE 1");
                         break;
                     }
                 } else {
                     if (currentPosition < currentKeySlot && currentKeySlot <= freeSlot) {
-                        //System.out.println("SHIFT -> BREAK CASE 2");
                         break;
                     }
                 }
-                //System.out.println("h1*******");
                 currentPosition = (currentPosition + 1) % totalCapacity;
             }
-            data[freeSlot] = data[currentPosition];
+            data[freeSlot].key = data[currentPosition].key;
+            data[freeSlot].val = data[currentPosition].val;
+            data[freeSlot].l = data[currentPosition].l;
+            data[freeSlot].r = data[currentPosition].r;
             if (data[currentPosition].l >= 0) {
-                //System.out.println("h2*******");
                 data[data[currentPosition].l].r = freeSlot;
                 if (currentPosition == tail) {
                     tail = freeSlot;
                 }
             }
             if (data[currentPosition].r >= 0) {
-                //System.out.println("h3*******");
                 data[data[currentPosition].r].l = freeSlot;
                 if (currentPosition == head) {
                     head = freeSlot;
