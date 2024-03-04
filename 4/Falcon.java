@@ -36,7 +36,7 @@ public class Falcon<K, V> implements Cache<K, V> {
         capacity = N;
     }
 
-    private void print() {
+    public void print() {
         System.out.println("Head: " + head);
         System.out.println("Tail: " + tail);
         for (int i = 0; i < size; i++) {
@@ -125,8 +125,9 @@ public class Falcon<K, V> implements Cache<K, V> {
                 // If the position is null then the key isn't in the cache yet
                 // If there is no space then we remove the key located in the head
                 if (capacity == 0) {
-                    removeEntry(head);
-                    shiftKeys(head);
+                    int currentHead = head;
+                    removeEntry(currentHead);
+                    shiftKeys(currentHead);
                     ++capacity;
                     break;
                 } else { // We have space, so just insert it
