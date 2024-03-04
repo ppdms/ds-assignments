@@ -3,20 +3,32 @@ import java.io.IOException;
 
 import javax.print.DocFlavor.STRING;
 
-
+ 
 public class TestCacheSpeed {
 
 	public static void main(String[] args) throws IOException {
+		//IntIntLRUCache cache = new IntIntLRUCache(4, 0.75f); // Cache size of 8 with 0.75 fill factor
+
+		// Adding three random key-value pairs
+		/* cache.put(1, 10);
+		cache.put(2, 20);
+		cache.put(3, 30);
+		cache.put(4, 40);
+		cache.put(5, 50);
+		cache.put(6, 60);
+		//cache.get(4);
+		System.err.println(cache.get(4));*/
 		
-		int cachesize = 100;
+		
+		int cachesize = 500;
 		//initialize with your cache implementation		
-		Cache<String, String> cache = new Falcon<String, String>(10); // TODO: change to cachesize
+		Cache<String, String> cache = new Falcon<String, String>(cachesize); // TODO: change to cachesize
 		
 		//give path to the dat file
-		String dataFile = "datasets/dataset-1000/data-1000.dat";
+		String dataFile = "datasets/dataset-5000/data-5000.dat";
 		
 		//give path to the workload file
-		String requestsFile = "datasets/dataset-1000/silly-requests.dat";
+		String requestsFile = "datasets/dataset-5000/requests-100000.dat";
 
 		DataSource dataSource = new DataSource(dataFile);
 		WorkloadReader requestReader = new WorkloadReader(requestsFile);
@@ -24,7 +36,7 @@ public class TestCacheSpeed {
 		String key = null;		
 		long numberOfRequests = 0;
 		
-		/*start performance test*/
+		// start performance test
 		
 		//track current time
 		long startTime = System.currentTimeMillis();
@@ -38,18 +50,19 @@ public class TestCacheSpeed {
 					throw new IllegalArgumentException("DID NOT FIND DATA WITH KEY " + key +". Have you set up files properly?");
 				}else{
 					cache.store(key, data);
-					//System.out.println("TestCacheSpeed: storing!");
+					System.out.println("DEBUG: storing!");
 				}
-			} else {//System.out.println("TestCacheSpeed: hit!");
-			}	
+			} else {System.out.println("DEBUG: hit!");}	
 		}
 
-		/*speed test finished*/
+		// speed test finished
 		long duration = System.currentTimeMillis() - startTime;
 		
 		System.out.printf("Read %d items in %d ms\n", numberOfRequests,	duration);
 		System.out.printf("Stats: lookups %d, hits %d, hit-ratio %f\n", cache.getNumberOfLookUps(), cache.getHits(), cache.getHitRatio());
 
-		requestReader.close();
+		requestReader.close();  
+		
+		
 	}
 }
