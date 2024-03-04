@@ -8,15 +8,15 @@ public class TestCacheSpeed {
 
 	public static void main(String[] args) throws IOException {
 		
-		int cachesize = 500;
+		int cachesize = 100;
 		//initialize with your cache implementation		
 		Cache<String, String> cache = new Falcon<String, String>(cachesize);
     
 		//give path to the dat file
-		String dataFile = "datasets/dataset-5000/data-5000.dat";
+		String dataFile = "datasets/dataset-1000/data-1000.dat";
 		
 		//give path to the workload file
-		String requestsFile = "datasets/dataset-5000/requests-100000.dat";
+		String requestsFile = "datasets/dataset-1000/requests-10000.dat";
 
 		DataSource dataSource = new DataSource(dataFile);
 		WorkloadReader requestReader = new WorkloadReader(requestsFile);
@@ -32,12 +32,6 @@ public class TestCacheSpeed {
 		while ((key = requestReader.nextRequest()) != null) {
 			System.out.println("requests " + numberOfRequests++);
 			String data = (String)cache.lookUp(key);
-			
-			String otherData = (String)betterCache.lookUp(key);
-			if (data == null && otherData != null) {
-				System.out.println("Looked up key: " + key + " with hash: " + key.hashCode() % 500 + " but didn't find it. Cache is currently: " );
-				((Falcon<String, String>) cache).print();
-			}
 
 			if (data == null) {//data not in cache
 				data = dataSource.readItem(key);
