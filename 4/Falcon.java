@@ -30,7 +30,6 @@ public class Falcon<K, V> implements Cache<K, V> {
         data = (Record<K, V>[]) Array.newInstance((new Record<thisK, thisV>()).getClass(), totalCapacity);
         for (int i = 0; i < totalCapacity; i++) {
             data[i] = new Record<K, V>();
-            System.out.println(i);
         }
         cacheSize = N;
     }
