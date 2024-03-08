@@ -6,9 +6,8 @@ in the animal kingdom, reaching speeds of over 387 kilometers per hour.
 import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
-    private final int NULL = -1;
 
-    private class Record <K, V> {
+    private class Record<K, V> {
         K key;
         V val;
         int l = -1;
@@ -18,7 +17,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     private final Record<K, V>[] data;
     private int head = -1;
     private int tail = -1;
-    
+
     private static int totalCapacity; // how much space we have remaining
     private int cacheSize;
     private long lookups = 0;
@@ -35,13 +34,14 @@ public class Falcon<K, V> implements Cache<K, V> {
     }
 
     /**
-	 * Look for data associated with key. 
-	 * @param key the key to look for
-	 * @return The associated data or null if it is not found
-	 */
-     
+     * Look for data associated with key.
+     * 
+     * @param key the key to look for
+     * @return The associated data or null if it is not found
+     */
+
     @Override
-	public V lookUp(K key) { 
+    public V lookUp(K key) {
         ++lookups;
         int startPosition = key.hashCode() % totalCapacity;
         int currentPosition = startPosition;
@@ -59,51 +59,41 @@ public class Falcon<K, V> implements Cache<K, V> {
         } while (currentPosition != startPosition);
         return null;
     }
-    
-	
-	/**
-	 * Stores data with associated with the given key. If required, it evicts a
-	 * data record to make room for the new one
-	 * @param key the key to associate with the data
-	 * @param value the actual data
-	 */
-    
+
+    /**
+     * Stores data with associated with the given key. If required, it evicts a
+     * data record to make room for the new one
+     * 
+     * @param key   the key to associate with the data
+     * @param value the actual data
+     */
+
     @Override
-	public void store(K key, V value) {
+    public void store(K key, V value) {
         int pos = key.hashCode() % totalCapacity;
         do {
-            // If the key is found, then we update the value and the priority of the key 
-            if (data[pos].key != null) {
-                if (data[pos].key.equals(key)) { // key already at data[hash]
-                    data[pos].val = value;
-                    // move this to tail
-                    removeEntry(pos);
+            if (cacheSize == 0) {
+                int currentHead = head;
+                removeEntry(currentHead);
+                shiftKeys(currentHead);
+                ++cacheSize;
+                break;
+            }
+            if (data[pos].key != null) { // if cell isn't empty
+                if (data[pos].key.equals(key)) { // if key already at data[hash]
+                    data[pos].val = value; // we update the value
+                    removeEntry(pos); // move it to tail, updating priority
                     addEntry(pos);
                     return;
                 }
-                if (cacheSize == 0) {
-                    int currentHead = head;
-                    removeEntry(currentHead);
-                    shiftKeys(currentHead);
-                    ++cacheSize;
-                    break;
-                }
-            } else {
+            } else if (cacheSize > 0) {
                 // If the position is null then the key isn't in the cache yet
-                // If there is no space then we remove the key located in the head
-                if (cacheSize == 0) {
-                    int currentHead = head;
-                    removeEntry(currentHead);
-                    shiftKeys(currentHead);
-                    ++cacheSize;
-                    break;
-                } else { // We have space, so just insert it
-                    data[pos].key = key;
-                    data[pos].val = value;
-                    addEntry(pos);
-                    --cacheSize;
-                    return;
-                }
+                // We have space, so just insert it
+                data[pos].key = key;
+                data[pos].val = value;
+                addEntry(pos);
+                --cacheSize;
+                return;
             }
             pos = (pos + 1) % totalCapacity; // Wraps around the array
         } while (true);
@@ -121,53 +111,59 @@ public class Falcon<K, V> implements Cache<K, V> {
             currentPosition = (currentPosition + 1) % totalCapacity; // Wraps around the array
         } while (currentPosition != pos);
     }
-	
-	/**
-	 * Returns the hit ratio, i.e. the number of times a lookup was successful divided by the number of lookup 
-	 * @return the cache hit ratio
-	 */
+
+    /**
+     * Returns the hit ratio, i.e. the number of times a lookup was successful
+     * divided by the number of lookup
+     * 
+     * @return the cache hit ratio
+     */
     @Override
-	public double getHitRatio() {
+    public double getHitRatio() {
         return (double) hits / lookups;
     }
-	
-	/**
-	 * Returns the absolute number of cache hits, i.e. the number of times a lookup found data in the cache
-	 */
+
+    /**
+     * Returns the absolute number of cache hits, i.e. the number of times a lookup
+     * found data in the cache
+     */
     @Override
-	public long getHits() {
+    public long getHits() {
         return hits;
     }
-	
-	/**
-	 * Returns the absolute number of cache misses, i.e. the number of times a lookup returned null
-	 */
+
+    /**
+     * Returns the absolute number of cache misses, i.e. the number of times a
+     * lookup returned null
+     */
     @Override
-	public long getMisses() {
+    public long getMisses() {
         return lookups - hits;
     }
-	
-	/**
-	 * Returns the total number of lookups performed by this cache 
-	 */
+
+    /**
+     * Returns the total number of lookups performed by this cache
+     */
     @Override
-	public long getNumberOfLookUps() {
+    public long getNumberOfLookUps() {
         return lookups;
     }
 
     /*
-     *  Helpers for store
+     * Helpers for store
      */
     private void removeEntry(int position) {
-        // If there is another object to the left of the one to be deleted then set that one's right as the right of the selected one
+        // If there is another object to the left of the one to be deleted then set that
+        // one's right as the right of the selected one
         if (data[position].l >= 0) {
             data[data[position].l].r = data[position].r;
-        } 
+        }
         // otherwise change the head pointer
-        else { 
+        else {
             head = data[position].r;
         }
-        // If there is another object to the right of the one to be deleted then set that one's left as the left of the selected one
+        // If there is another object to the right of the one to be deleted then set
+        // that one's left as the left of the selected one
         if (data[position].r >= 0) {
             data[data[position].r].l = data[position].l;
         }
@@ -183,7 +179,7 @@ public class Falcon<K, V> implements Cache<K, V> {
             data[tail].r = position;
         }
         data[position].l = tail;
-        data[position].r = NULL;
+        data[position].r = -1;
         tail = position;
         if (head < 0) {
             head = tail;

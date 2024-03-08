@@ -30,7 +30,6 @@ public class TestCacheSpeed {
 		long startTime = System.currentTimeMillis();
 		
 		while ((key = requestReader.nextRequest()) != null) {
-			System.out.println("requests " + numberOfRequests++);
 			String data = (String)cache.lookUp(key);
 
 			if (data == null) {//data not in cache
@@ -39,11 +38,10 @@ public class TestCacheSpeed {
 					throw new IllegalArgumentException("DID NOT FIND DATA WITH KEY " + key +". Have you set up files properly?");
 				}else{
 					cache.store(key, data);
-					System.out.println("DEBUG: storing!");
 				}
-			} else {System.out.println("DEBUG: hit!");}	
 
-		}
+		    }
+        }
 
 		// speed test finished
 		long duration = System.currentTimeMillis() - startTime;
