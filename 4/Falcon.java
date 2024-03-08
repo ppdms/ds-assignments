@@ -71,14 +71,25 @@ public class Falcon<K, V> implements Cache<K, V> {
     @Override
     public void store(K key, V value) {
         int pos = key.hashCode() % totalCapacity;
+        if (cacheSize == 0) {
+            int currentHead = head;
+            removeEntry(currentHead);
+            shiftKeys(currentHead);
+            ++cacheSize;
+            int currentPosition = pos;
+            do {
+                // we simply search for the new empty spot
+                if (data[currentPosition].key == null) {
+                    data[currentPosition].key = key;
+                    data[currentPosition].val = value;
+                    addEntry(currentPosition);
+                    --cacheSize;
+                    return;
+                }
+                currentPosition = (currentPosition + 1) % totalCapacity; // Wraps around the array
+            } while (currentPosition != pos);
+        }
         do {
-            if (cacheSize == 0) {
-                int currentHead = head;
-                removeEntry(currentHead);
-                shiftKeys(currentHead);
-                ++cacheSize;
-                break;
-            }
             if (data[pos].key != null) { // if cell isn't empty
                 if (data[pos].key.equals(key)) { // if key already at data[hash]
                     data[pos].val = value; // we update the value
@@ -86,7 +97,7 @@ public class Falcon<K, V> implements Cache<K, V> {
                     addEntry(pos);
                     return;
                 }
-            } else if (cacheSize > 0) {
+            } else {
                 // If the position is null then the key isn't in the cache yet
                 // We have space, so just insert it
                 data[pos].key = key;
@@ -97,19 +108,6 @@ public class Falcon<K, V> implements Cache<K, V> {
             }
             pos = (pos + 1) % totalCapacity; // Wraps around the array
         } while (true);
-        pos = key.hashCode() % totalCapacity;
-        int currentPosition = pos;
-        do {
-            // In case a break happens we simply search for the new empty spot
-            if (data[currentPosition].key == null) {
-                data[currentPosition].key = key;
-                data[currentPosition].val = value;
-                addEntry(currentPosition);
-                --cacheSize;
-                return;
-            }
-            currentPosition = (currentPosition + 1) % totalCapacity; // Wraps around the array
-        } while (currentPosition != pos);
     }
 
     /**
