@@ -76,18 +76,17 @@ public class Falcon<K, V> implements Cache<K, V> {
             removeEntry(currentHead);
             shiftKeys(currentHead);
             ++cacheSize;
-            int currentPosition = pos;
             do {
                 // we simply search for the new empty spot
-                if (data[currentPosition].key == null) {
-                    data[currentPosition].key = key;
-                    data[currentPosition].val = value;
-                    addEntry(currentPosition);
+                if (data[pos].key == null) {
+                    data[pos].key = key;
+                    data[pos].val = value;
+                    addEntry(pos);
                     --cacheSize;
                     return;
                 }
-                currentPosition = (currentPosition + 1) % totalCapacity; // Wraps around the array
-            } while (currentPosition != pos);
+                pos = (pos + 1) % totalCapacity; // Wraps around the array
+            } while (true);
         }
         do {
             if (data[pos].key != null) { // if cell isn't empty
