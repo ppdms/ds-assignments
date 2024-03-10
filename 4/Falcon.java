@@ -195,14 +195,9 @@ public class Falcon<K, V> implements Cache<K, V> {
                     return;
                 }
                 currentKeySlot = data[currentPosition].key.hashCode() % totalCapacity;
-                if (freeSlot <= currentPosition) {
-                    if (freeSlot >= currentKeySlot || currentKeySlot > currentPosition) {
-                        break;
-                    }
-                } else {
-                    if (currentPosition < currentKeySlot && currentKeySlot <= freeSlot) {
-                        break;
-                    }
+                if ((freeSlot <= currentPosition && (freeSlot >= currentKeySlot || currentKeySlot > currentPosition)) ||
+                    (freeSlot > currentPosition && (currentPosition < currentKeySlot && currentKeySlot <= freeSlot))) {
+                    break;
                 }
                 currentPosition = (currentPosition + 1) % totalCapacity;
             }
@@ -210,17 +205,17 @@ public class Falcon<K, V> implements Cache<K, V> {
             data[freeSlot].val = data[currentPosition].val;
             data[freeSlot].l = data[currentPosition].l;
             data[freeSlot].r = data[currentPosition].r;
-            if (data[currentPosition].l >= 0) {
-                data[data[currentPosition].l].r = freeSlot;
-                if (currentPosition == tail) {
-                    tail = freeSlot;
-                }
+            if (data[freeSlot].l >= 0) {
+                data[data[freeSlot].l].r = freeSlot;
             }
-            if (data[currentPosition].r >= 0) {
-                data[data[currentPosition].r].l = freeSlot;
-                if (currentPosition == head) {
-                    head = freeSlot;
-                }
+            if (data[freeSlot].r >= 0) {
+                data[data[freeSlot].r].l = freeSlot;
+            }
+            if (currentPosition == tail) {
+                tail = freeSlot;
+            }
+            if (currentPosition == head) {
+                head = freeSlot;
             }
         } while (true);
     }
