@@ -8,9 +8,11 @@ public class TestCacheSpeed {
 
 	public static void main(String[] args) throws IOException {
 		
-		int cachesize = 100;
+		int cachesize = 500;
 		//initialize with your cache implementation		
 		Cache<String, String> cache = new Falcon<String, String>(cachesize);
+
+		//LRUCache cache = new LRUCache(cachesize);
     
 		//give path to the dat file
 		String dataFile = "datasets/dataset-1000/data-1000.dat";

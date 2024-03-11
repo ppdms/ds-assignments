@@ -7,11 +7,12 @@ import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
 
+    @SuppressWarnings("hiding")
     private class Record<K, V> {
         K key;
-        V val;
-        int l = -1;
-        int r = -1;
+        V value;
+        int left = -1;
+        int right = -1;
     }
 
     private final Record<K, V>[] data;
@@ -43,20 +44,20 @@ public class Falcon<K, V> implements Cache<K, V> {
     @Override
     public V lookUp(K key) {
         ++lookups;
-        int startPosition = key.hashCode() % totalCapacity;
-        int currentPosition = startPosition;
+        int start = key.hashCode() % totalCapacity;
+        int pos = start;
         do {
-            if (data[currentPosition].key == null) {
+            if (data[pos].key == null) {
                 return null;
             }
-            if (key.equals(data[currentPosition].key)) {
-                removeEntry(currentPosition);
-                addEntry(currentPosition);
+            if (key.equals(data[pos].key)) {
+                remove(pos);
+                add(pos);
                 ++hits;
-                return data[currentPosition].val;
+                return data[pos].value;
             }
-            currentPosition = (currentPosition + 1) % totalCapacity;
-        } while (currentPosition != startPosition);
+            pos = (pos + 1) % totalCapacity;
+        } while (pos != start);
         return null;
     }
 
@@ -73,15 +74,15 @@ public class Falcon<K, V> implements Cache<K, V> {
         int pos = key.hashCode() % totalCapacity;
         if (cacheSize == 0) {
             int currentHead = head;
-            removeEntry(currentHead);
+            remove(currentHead);
             shiftKeys(currentHead);
             ++cacheSize;
             do {
                 // we simply search for the new empty spot
                 if (data[pos].key == null) {
                     data[pos].key = key;
-                    data[pos].val = value;
-                    addEntry(pos);
+                    data[pos].value = value;
+                    add(pos);
                     --cacheSize;
                     return;
                 }
@@ -91,17 +92,17 @@ public class Falcon<K, V> implements Cache<K, V> {
         do {
             if (data[pos].key != null) { // if cell isn't empty
                 if (data[pos].key.equals(key)) { // if key already at data[hash]
-                    data[pos].val = value; // we update the value
-                    removeEntry(pos); // move it to tail, updating priority
-                    addEntry(pos);
+                    data[pos].value = value; // we update the value
+                    remove(pos); // move it to tail, updating priority
+                    add(pos);
                     return;
                 }
             } else {
                 // If the position is null then the key isn't in the cache yet
                 // We have space, so just insert it
                 data[pos].key = key;
-                data[pos].val = value;
-                addEntry(pos);
+                data[pos].value = value;
+                add(pos);
                 --cacheSize;
                 return;
             }
@@ -149,73 +150,73 @@ public class Falcon<K, V> implements Cache<K, V> {
     /*
      * Helpers for store
      */
-    private void removeEntry(int position) {
+    private void remove(int position) {
         // If there is another object to the left of the one to be deleted then set that
         // one's right as the right of the selected one
-        if (data[position].l >= 0) {
-            data[data[position].l].r = data[position].r;
+        if (data[position].left >= 0) {
+            data[data[position].left].right = data[position].right;
         }
         // otherwise change the head pointer
         else {
-            head = data[position].r;
+            head = data[position].right;
         }
         // If there is another object to the right of the one to be deleted then set
         // that one's left as the left of the selected one
-        if (data[position].r >= 0) {
-            data[data[position].r].l = data[position].l;
+        if (data[position].right >= 0) {
+            data[data[position].right].left = data[position].left;
         }
         // otherwise change the tail pointer
         else {
-            tail = data[position].l;
+            tail = data[position].left;
         }
     }
 
-    private void addEntry(int position) {
+    private void add(int position) {
         // Place the data back at the end (in a way updating it's priority in the cache)
         if (tail >= 0) {
-            data[tail].r = position;
+            data[tail].right = position;
         }
-        data[position].l = tail;
-        data[position].r = -1;
+        data[position].left = tail;
+        data[position].right = -1;
         tail = position;
         if (head < 0) {
             head = tail;
         }
     }
 
-    private void shiftKeys(int currentPosition) {
-        int freeSlot;
-        int currentKeySlot;
+    private void shiftKeys(int pos) {
+        int free;
+        int current;
         do {
-            freeSlot = currentPosition;
-            currentPosition = (currentPosition + 1) % totalCapacity;
+            free = pos;
+            pos = (pos + 1) % totalCapacity;
             while (true) {
-                if (data[currentPosition].key == null) {
-                    data[freeSlot].key = null;
+                if (data[pos].key == null) {
+                    data[free].key = null;
                     return;
                 }
-                currentKeySlot = data[currentPosition].key.hashCode() % totalCapacity;
-                if ((freeSlot <= currentPosition && (freeSlot >= currentKeySlot || currentKeySlot > currentPosition)) ||
-                    (freeSlot > currentPosition && (currentPosition < currentKeySlot && currentKeySlot <= freeSlot))) {
+                current = data[pos].key.hashCode() % totalCapacity;
+                if ((free <= pos && (free >= current || current > pos)) ||
+                    (free > pos && (pos < current && current <= free))) {
                     break;
                 }
-                currentPosition = (currentPosition + 1) % totalCapacity;
+                pos = (pos + 1) % totalCapacity;
             }
-            data[freeSlot].key = data[currentPosition].key;
-            data[freeSlot].val = data[currentPosition].val;
-            data[freeSlot].l = data[currentPosition].l;
-            data[freeSlot].r = data[currentPosition].r;
-            if (data[freeSlot].l >= 0) {
-                data[data[freeSlot].l].r = freeSlot;
+            data[free].key = data[pos].key;
+            data[free].value = data[pos].value;
+            data[free].left = data[pos].left;
+            data[free].right = data[pos].right;
+            if (data[free].left >= 0) {
+                data[data[free].left].right = free;
             }
-            if (data[freeSlot].r >= 0) {
-                data[data[freeSlot].r].l = freeSlot;
+            if (data[free].right >= 0) {
+                data[data[free].right].left = free;
             }
-            if (currentPosition == tail) {
-                tail = freeSlot;
+            if (pos == tail) {
+                tail = free;
             }
-            if (currentPosition == head) {
-                head = freeSlot;
+            if (pos == head) {
+                head = free;
             }
         } while (true);
     }
