@@ -19,8 +19,8 @@ public class Falcon<K, V> implements Cache<K, V> {
     private int head = -1;
     private int tail = -1;
 
-    private static int totalCapacity; // how much space we have remaining
-    private int cacheSize;
+    private static int totalCapacity; // how many cells in the hashtable
+    private int cacheSize; // how much space remaining to store data
     private long lookups = 0;
     private long hits = 0;
 
@@ -71,7 +71,7 @@ public class Falcon<K, V> implements Cache<K, V> {
 
     @Override
     public void store(K key, V value) {
-        int pos = key.hashCode() % totalCapacity; // hash(key.hashCode()) % totalCapacity;
+        int pos = key.hashCode() % totalCapacity; // hash(key.hashCode());
         if (cacheSize == 0) {
             int currentHead = head;
             remove(currentHead);
@@ -152,7 +152,7 @@ public class Falcon<K, V> implements Cache<K, V> {
      */
 
     /*
-    int hash(long h) { // based on murmur64
+    private static int hash(long h) { // based on murmur64
         h ^= h >>> 33;
         h *= 0xff51afd7ed558ccdL;
         h ^= h >>> 33;
