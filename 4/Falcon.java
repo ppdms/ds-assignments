@@ -1,7 +1,7 @@
 /*
 The peregrine falcon (Falco peregrinus) is the fastest known creature
 in the animal kingdom, reaching speeds of over 387 kilometers per hour.
-Authors: Vasileios Papadimas (3220150) & Marios Matsa (3220120)
+Authors: Vasileios Papadimas (3220150) & Mario Matsas (3220120)
 */
 
 import java.lang.reflect.Array;
