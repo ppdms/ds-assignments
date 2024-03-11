@@ -8,7 +8,7 @@ public class TestCacheSpeed {
 
 	public static void main(String[] args) throws IOException {
 		
-		int cachesize = 500;
+		int cachesize = 100;
 		//initialize with your cache implementation		
 		Cache<String, String> cache = new Falcon<String, String>(cachesize);
 

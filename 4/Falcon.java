@@ -1,16 +1,16 @@
 /*
 The peregrine falcon (Falco peregrinus) is the fastest known creature
 in the animal kingdom, reaching speeds of over 387 kilometers per hour.
+Authors: Vasileios Papadimas (3220150) & Marios Matsa (3220120)
 */
 
 import java.lang.reflect.Array;
 
 public class Falcon<K, V> implements Cache<K, V> {
 
-    @SuppressWarnings("hiding")
-    private class Record<K, V> {
-        K key;
-        V value;
+    private class Record<thisK, thisV> {
+        thisK key;
+        thisV value;
         int left = -1;
         int right = -1;
     }
@@ -44,7 +44,7 @@ public class Falcon<K, V> implements Cache<K, V> {
     @Override
     public V lookUp(K key) {
         ++lookups;
-        int start = key.hashCode() % totalCapacity;
+        int start = key.hashCode() % totalCapacity; // hash(key.hashCode());
         int pos = start;
         do {
             if (data[pos].key == null) {
@@ -71,11 +71,11 @@ public class Falcon<K, V> implements Cache<K, V> {
 
     @Override
     public void store(K key, V value) {
-        int pos = key.hashCode() % totalCapacity;
+        int pos = key.hashCode() % totalCapacity; // hash(key.hashCode()) % totalCapacity;
         if (cacheSize == 0) {
             int currentHead = head;
             remove(currentHead);
-            shiftKeys(currentHead);
+            shift(currentHead);
             ++cacheSize;
             do {
                 // we simply search for the new empty spot
@@ -150,41 +150,53 @@ public class Falcon<K, V> implements Cache<K, V> {
     /*
      * Helpers for store
      */
-    private void remove(int position) {
+
+    /*
+    int hash(long h) { // based on murmur64
+        h ^= h >>> 33;
+        h *= 0xff51afd7ed558ccdL;
+        h ^= h >>> 33;
+        h *= 0xc4ceb9fe1a85ec53L;
+        h ^= h >>> 33;
+        return Math.floorMod(h, totalCapacity);
+    }
+    */
+
+    private void remove(int pos) {
         // If there is another object to the left of the one to be deleted then set that
         // one's right as the right of the selected one
-        if (data[position].left >= 0) {
-            data[data[position].left].right = data[position].right;
+        if (data[pos].left >= 0) {
+            data[data[pos].left].right = data[pos].right;
         }
         // otherwise change the head pointer
         else {
-            head = data[position].right;
+            head = data[pos].right;
         }
         // If there is another object to the right of the one to be deleted then set
         // that one's left as the left of the selected one
-        if (data[position].right >= 0) {
-            data[data[position].right].left = data[position].left;
+        if (data[pos].right >= 0) {
+            data[data[pos].right].left = data[pos].left;
         }
         // otherwise change the tail pointer
         else {
-            tail = data[position].left;
+            tail = data[pos].left;
         }
     }
 
-    private void add(int position) {
+    private void add(int pos) {
         // Place the data back at the end (in a way updating it's priority in the cache)
         if (tail >= 0) {
-            data[tail].right = position;
+            data[tail].right = pos;
         }
-        data[position].left = tail;
-        data[position].right = -1;
-        tail = position;
+        data[pos].left = tail;
+        data[pos].right = -1;
+        tail = pos;
         if (head < 0) {
             head = tail;
         }
     }
 
-    private void shiftKeys(int pos) {
+    private void shift(int pos) {
         int free;
         int current;
         do {
@@ -195,13 +207,14 @@ public class Falcon<K, V> implements Cache<K, V> {
                     data[free].key = null;
                     return;
                 }
-                current = data[pos].key.hashCode() % totalCapacity;
+                current = data[pos].key.hashCode() % totalCapacity; // hash(data[pos].key.hashCode());
                 if ((free <= pos && (free >= current || current > pos)) ||
-                    (free > pos && (pos < current && current <= free))) {
+                        (free > pos && (pos < current && current <= free))) {
                     break;
                 }
                 pos = (pos + 1) % totalCapacity;
             }
+            // needs to be done this way to avoid shallow copying
             data[free].key = data[pos].key;
             data[free].value = data[pos].value;
             data[free].left = data[pos].left;
